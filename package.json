@@ -1,0 +1,13 @@
+{
+  "name": "daily-bread",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Daily Bread — Bible companion app",
+  "dependencies": {
+    "@anthropic-ai/sdk": "latest"
+  },
+  "devDependencies": {
+    "@netlify/functions": "latest"
+  }
+}
