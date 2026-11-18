@@ -85,7 +85,17 @@ window.DB_STANDALONE = true;
       onState:f=>{stateCb=f},onLine:()=>{},onPosition:()=>{},setRate:()=>{},add:()=>Promise.resolve()
     };
   }
-  const caps={sample,db,user,tts};
+  let dictation=null;const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(SR){let onP=()=>{},onF=()=>{},onS=()=>{},rec=null;
+    dictation={
+      start:()=>{try{rec=new SR();rec.lang=navigator.language||"en-US";rec.interimResults=true;rec.continuous=false;
+        rec.onresult=e=>{let fin="",par="";for(let i=e.resultIndex;i<e.results.length;i++){const r=e.results[i];if(r.isFinal)fin+=r[0].transcript;else par+=r[0].transcript}if(par)onP({text:par});if(fin)onF({text:fin})};
+        rec.onend=()=>onS({state:"idle",reason:"stopped"});rec.onerror=e=>onS({state:"idle",reason:e.error||"error"});
+        rec.start();onS({state:"listening"});return Promise.resolve()}catch(e){return Promise.reject({code:"error"})}},
+      stop:async()=>{try{rec&&rec.stop()}catch(e){}},
+      onPartial:f=>{onP=f},onFinal:f=>{onF=f},onState:f=>{onS=f}};
+  }
+  const caps={sample,db,user,tts,dictation};
   window.claude={use:async n=>caps[n]||null};
 })();
 </script>
@@ -720,6 +730,46 @@ body[data-theme="parchment"] .rays i,body[data-theme="snow"] .rays i{mix-blend-m
 .vplay.sm{position:static;transform:none;flex:none;width:36px;height:36px;font-size:13px;background:#e62117;border:0}
 a.btn,a.vcard,a.vpick{text-decoration:none}
 .copyfield{width:100%;font-size:13px!important;padding:11px 12px!important;border-radius:12px;color:var(--text)!important;background:rgba(127,127,127,.14)!important;border:1px solid var(--line);outline:none}
+
+/* =================== SMART =================== */
+.smart{position:relative;display:flex;align-items:center;gap:6px;padding:6px 6px 6px 14px;margin:0 0 8px;border-radius:20px;background:var(--card2);isolation:isolate}
+.smart::before,.glowborder::after{content:"";position:absolute;inset:-1.5px;border-radius:inherit;padding:1.5px;z-index:-1;pointer-events:none;
+  background:conic-gradient(from var(--ang,0deg),var(--gold),var(--rose),var(--violet),var(--gold));animation:angspin 6s linear infinite;
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
+@property --ang{syntax:"<angle>";initial-value:0deg;inherits:false}
+@keyframes angspin{to{--ang:360deg}}
+.smart:focus-within{box-shadow:0 0 0 4px color-mix(in srgb,var(--rose) 22%,transparent),0 12px 40px -12px var(--glowc)}
+.smart-ic{font-size:17px;animation:twinkle 2.4s ease-in-out infinite}
+@keyframes twinkle{50%{transform:scale(1.2) rotate(15deg);opacity:.75}}
+.smart input{flex:1;background:transparent!important;border:0!important;padding:10px 4px!important;font-size:15.5px;min-width:0;box-shadow:none!important}
+.smart-go{width:40px;height:40px;border-radius:14px;background:var(--grad);color:#fff;font-weight:900;font-size:17px;flex:none}
+.mic{width:40px;height:40px;border-radius:14px;flex:none;background:rgba(127,127,127,.14);font-size:17px}
+.mic.live{background:#e5484d;animation:micpulse 1.1s ease-in-out infinite}
+@keyframes micpulse{50%{box-shadow:0 0 0 8px rgba(229,72,77,.25)}}
+#hForm .mic{align-self:flex-end}
+.smart-hints{display:flex;gap:6px;overflow-x:auto;margin:0 -16px 14px;padding:0 16px 2px;scrollbar-width:none}
+.smart-hints::-webkit-scrollbar{display:none}
+.smart-hints .chip{flex:none;font-size:12.5px;padding:6px 11px}
+.glowborder{isolation:isolate}
+.glowborder::before{display:none}
+.fy{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:11px 12px;border-radius:14px;margin-bottom:7px;background:rgba(255,255,255,.04);border:1px solid var(--line);color:var(--text);text-decoration:none;transition:transform .15s}
+.fy:last-child{margin-bottom:0}.fy:active{transform:scale(.98)}
+.fy-ic{flex:none;width:38px;height:38px;border-radius:12px;display:grid;place-items:center;font-size:19px;background:var(--grad)}
+.fy-t{flex:1;min-width:0}.fy-t b{display:block;font-size:14.5px;line-height:1.25}.fy-t small{display:block;font-size:12px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fy-go{color:var(--gold);font-size:20px;font-weight:700}
+.mood-chips{display:flex;gap:7px;overflow-x:auto;margin:0 -18px;padding:2px 18px 6px;scrollbar-width:none}
+.mood-chips::-webkit-scrollbar{display:none}
+.mchip{flex:none;display:flex;flex-direction:column;align-items:center;gap:3px;min-width:74px;padding:10px 8px;border-radius:16px;background:var(--card2);border:1px solid var(--line);font-size:11.5px;font-weight:700;color:var(--text);transition:transform .2s cubic-bezier(.3,1.6,.5,1),background .2s}
+.mchip span{font-size:26px;transition:transform .3s cubic-bezier(.3,1.6,.5,1)}
+.mchip:active{transform:scale(.92)}
+.mchip.on{background:var(--grad);color:#fff;border-color:transparent;box-shadow:0 8px 22px -8px var(--glowc)}
+.mchip.on span{transform:scale(1.2) rotate(-8deg)}
+.mood-res{margin-top:12px;animation:rise .5s cubic-bezier(.2,.8,.2,1)}
+.mood-head{display:flex;align-items:center;gap:10px;font-family:var(--serif);font-weight:800;font-size:21px;margin-bottom:10px}
+.mood-em{font-size:30px}
+.scrip-lite{font-family:var(--scripture);font-size:19px;line-height:1.45;padding:12px 14px;border-radius:14px;margin-bottom:10px;background:color-mix(in srgb,var(--gold) 10%,transparent);border-left:3px solid var(--gold)}
+.scrip-lite b{display:block;font-family:var(--sans);font-size:12px;letter-spacing:.8px;text-transform:uppercase;color:var(--gold);margin-top:6px}
+.va{animation:rise .45s cubic-bezier(.2,.8,.2,1) both}
 </style>
 </head>
 <body>
@@ -743,6 +793,15 @@ a.btn,a.vcard,a.vpick{text-decoration:none}
       <div class="date" id="dateLine"></div>
       <div class="hello" id="hello">Good morning</div>
     </div>
+
+    <form class="smart" id="smartForm" autocomplete="off">
+      <span class="smart-ic">✨</span>
+      <input type="text" id="smartIn" placeholder="Search or ask anything…" enterkeyhint="search">
+      <button type="button" class="mic" data-mic="smartIn" hidden aria-label="Speak">🎤</button>
+      <button type="submit" class="smart-go" aria-label="Go">➜</button>
+    </form>
+    <div class="smart-hints" id="smartHints"></div>
+    <div class="card" id="smartOut" hidden></div>
 
     <button class="install-banner" id="installBanner" hidden>
       <span class="ib-icon">📲</span><span class="ib-txt"><b>Install Daily Bread on your phone</b><small>Its own icon, full-screen, works offline</small></span><span class="ib-go">How</span>
@@ -771,6 +830,14 @@ a.btn,a.vcard,a.vpick{text-decoration:none}
       <button class="tile t-people" data-go="people"><span class="ti">👤</span><b>People</b><small>Bible lives</small></button>
       <button class="tile t-places" data-go="places"><span class="ti">📍</span><b>Places</b><small>Bible lands</small></button>
       <button class="tile t-videos" data-go="videos"><span class="ti">▶️</span><b>Videos</b><small>Watch & worship</small></button>
+    </div>
+
+    <div class="card glowborder" id="forYou"></div>
+
+    <div class="card mood" id="moodCard">
+      <div class="label"><span class="dot"></span>How's your heart today?</div>
+      <div class="mood-chips" id="moodChips"></div>
+      <div id="moodOut"></div>
     </div>
 
     <div class="card reading">
@@ -902,7 +969,7 @@ a.btn,a.vcard,a.vpick{text-decoration:none}
     <div id="hStarters" class="chips" style="margin-bottom:14px"></div>
     <div class="hchat" id="hLog"></div>
     <div class="hbar">
-      <form id="hForm"><textarea id="hIn" rows="1" placeholder="Ask anything…"></textarea><button class="btn gold" type="submit" id="hSend">Send</button></form>
+      <form id="hForm"><textarea id="hIn" rows="1" placeholder="Ask anything…"></textarea><button type="button" class="mic" data-mic="hIn" hidden aria-label="Speak">🎤</button><button class="btn gold" type="submit" id="hSend">Send</button></form>
       <div class="row" style="justify-content:space-between;margin-top:6px">
         <span class="tiny">Knows your plan, today's reading & tradition.</span>
         <button class="btn sm ghost" id="hClear" type="button">Clear chat</button>
@@ -1158,7 +1225,7 @@ function renderToday(){
   $("#planCheckTxt").textContent=done?"Today's reading complete — well done!":"Mark today's reading complete";
   $("#planBehind").innerHTML=P.behind?`${P.behind} earlier day${P.behind>1?"s":""} not yet marked. <a href="#" id="catchUp">See them</a>`:`${P.doneN} of ${P.N} days complete.`;
   countTo($("#streakN"),streak(),"");
-  renderInstallBanner();renderTodayPlans();
+  renderInstallBanner();renderTodayPlans();renderForYou();renderMood();renderSmartHints();
   renderDevo();
 }
 function renderDevo(){
@@ -1277,7 +1344,7 @@ function renderCats(){
 }
 async function explainTopic(topic){
   topic=topic.trim();if(!topic)return;
-  show("study");
+  show("study");setStudyMode("topics");
   const box=$("#topicResult");box.innerHTML=`<div class="card">${loadingHTML(`Exploring “${topic}”…`)}</div>`;
   box.scrollIntoView({behavior:"smooth",block:"start"});
   const len={simple:"Keep it simple and friendly, like explaining to a new believer; about 200 words of explanation.",standard:"Clear and substantive for a growing believer; about 400 words of explanation.",deep:"In-depth for serious study, including key terms and historical development; about 700 words of explanation."}[depth];
@@ -1316,7 +1383,7 @@ function renderHelper(){
 function helperContext(){
   const P=planInfo(),[,vr]=votd(),d=S.devos[todayKey()];
   return `You are "Helper", a warm, wise Christian companion inside the Daily Bread Bible app — like a caring, well-studied pastor and friend. Faithful to Scripture, pastoral, encouraging, honest and humble. Theological lens: ${S.trad}; where traditions differ, say so charitably. Quote Scripture only in the ${tr().name} (${tr().abbr}), word-for-word, always with the reference; never invent verses. Write in friendly plain text (no markdown symbols like ** or #), usually under 200 words unless asked for more; short paragraphs. When someone shares a struggle, respond with empathy first, then Scripture and practical hope; offer to pray with them by writing a short prayer when fitting. If someone mentions thoughts of self-harm or being in danger, gently urge them to contact the 988 Suicide & Crisis Lifeline (call or text 988 in the US) or emergency services, and a trusted pastor or friend. You are not a replacement for their church, pastor or counselor — encourage real community.
-Context: today is ${new Date().toDateString()}. ${S.name?`The user's name is ${S.name}. `:""}Reading plan: ${P.p.name}, day ${P.day+1} of ${P.N}; today's reading is ${rangeLabel(P.today)}. Verse of the day: ${vr}.${d?` Today's devotional: "${d.title}" on ${d.ref}.`:""} Last chapter opened in the reader: ${refName()}.`;
+Context: today is ${new Date().toDateString()}. ${S.name?`The user's name is ${S.name}. `:""}Reading plan: ${P.p.name}, day ${P.day+1} of ${P.N}; today's reading is ${rangeLabel(P.today)}. Verse of the day: ${vr}.${d?` Today's devotional: "${d.title}" on ${d.ref}.`:""} Last chapter opened in the reader: ${refName()}.${(()=>{const m=(S.moodLog||{})[todayKey()];const mm=m&&MOODS.find(x=>x[0]===m.mood);return mm?` Today they said they feel ${mm[2].toLowerCase()}.`:""})()}${plans().length?` Their study plans: ${plans().slice(0,3).map(p=>p.title).join(", ")}.`:""}`;
 }
 async function helperSend(q){
   q=q.trim();if(!q||hBusy)return;
@@ -1928,6 +1995,11 @@ document.addEventListener("click",e=>{
   if(t.dataset.themePick){S.theme=t.dataset.themePick;S.themeChosen=true;applyTheme(S.theme);save();document.querySelectorAll(".tcard").forEach(b=>b.classList.toggle("on",b===t));return}
   if(t.dataset.bgPick){S.bg=t.dataset.bgPick;applyBg();save();buzz(10);document.querySelectorAll(".bgcard").forEach(b=>b.classList.toggle("on",b===t));return}
   if(t.dataset.act==="themeDone"){S.themeChosen=true;save();closeSheet();return gestureTip()}
+  if(t.dataset.smart){$("#smartIn").value=t.dataset.smart;return smartRoute(t.dataset.smart)}
+  if(t.dataset.mood)return pickMood(t.dataset.mood);
+  if(t.dataset.mic)return micClick(t);
+  if(t.dataset.saveVa){const[ref,txt]=t.dataset.saveVa.split("|");if(!S.savedVerses.some(x=>x.ref===ref)){S.savedVerses.unshift({ref,text:txt,at:todayKey()});save();toast("Verse saved ❤️")}t.textContent="★ Saved";popEl(t);return}
+  if(t.dataset.act==="moodHelper"){const d=(S.moodLog||{})[todayKey()];const m=d&&MOODS.find(x=>x[0]===d.mood);show("ask");return helperSend(`I'm feeling ${m?m[2].toLowerCase():"a lot"} today. Can you help me with that?`)}
   if(t.dataset.go){const g=t.dataset.go;
     if(g==="read")return show("read");if(g==="ask")return show("ask");
     if(g==="devo"){const d=$("#devoCard");d.scrollIntoView({behavior:"smooth",block:"start"});d.classList.add("pulse-once");setTimeout(()=>d.classList.remove("pulse-once"),1400);return}
@@ -2025,7 +2097,7 @@ $("#hForm").addEventListener("submit",e=>{e.preventDefault();const q=$("#hIn").v
 $("#hIn").addEventListener("input",e=>{e.target.style.height="auto";e.target.style.height=Math.min(130,e.target.scrollHeight)+"px"});
 $("#hIn").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey&&matchMedia("(pointer:fine)").matches){e.preventDefault();$("#hForm").requestSubmit()}});
 document.addEventListener("change",e=>{if(e.target.id==="vidBook"){const b=BOOKS[Number(e.target.value)][0],a=$("#vidBookGo");a.href=yt(`BibleProject ${b} overview`);a.textContent=`▶ Watch ${b} overview`}});
-document.addEventListener("submit",e=>{if(e.target.id==="vidForm"){e.preventDefault();return findVideos($("#vidIn").value)}if(e.target.id==="customPlanForm"){e.preventDefault();const t=$("#cpTopic").value.trim();if(!t)return $("#cpTopic").focus();buildPlan(t,Number($("#cpDays").value),"","",true)}});
+document.addEventListener("submit",e=>{if(e.target.id==="smartForm"){e.preventDefault();const i=$("#smartIn");smartRoute(i.value);i.blur();return}if(e.target.id==="vidForm"){e.preventDefault();return findVideos($("#vidIn").value)}if(e.target.id==="customPlanForm"){e.preventDefault();const t=$("#cpTopic").value.trim();if(!t)return $("#cpTopic").focus();buildPlan(t,Number($("#cpDays").value),"","",true)}});
 $("#placeForm").addEventListener("submit",e=>{e.preventDefault();explainPlace($("#placeIn").value)});
 $("#personForm").addEventListener("submit",e=>{e.preventDefault();explainPerson($("#personIn").value)});
 $("#topicForm").addEventListener("submit",e=>{e.preventDefault();explainTopic($("#topicIn").value)});
@@ -2282,6 +2354,126 @@ function gestureGuide(){
    ${G.map(([i,a,b])=>`<div class="gest"><span class="gi">${i}</span><span><b>${a}</b><small>${b}</small></span></div>`).join("")}`);
 }
 
+/* ---------- Smart features ---------- */
+const SMART_EX=["Romans 8","verses about fear","Who was Gideon?","Explain grace","Where is Capernaum?","How do I forgive someone?","worship songs for a hard day","John 3:16"];
+let smartI=0;
+setInterval(()=>{const i=$("#smartIn");if(i&&document.activeElement!==i&&!i.value){smartI=(smartI+1)%SMART_EX.length;i.placeholder=`Try “${SMART_EX[smartI]}”`}},3200);
+function renderSmartHints(){const h=$("#smartHints");if(h)h.innerHTML=["verses about peace","Romans 8","Who was Ruth?","Explain the Trinity"].map(x=>`<button class="chip" data-smart="${esc(x)}">${esc(x)}</button>`).join("")}
+const norm=x=>String(x||"").toLowerCase().replace(/[^a-z0-9 ]/g," ").replace(/\s+/g," ").trim();
+const ALL_PEOPLE=[].concat(...Object.values(PEOPLE)),ALL_PLACES=[].concat(...Object.values(PLACES)),ALL_TOPICS=[].concat(...Object.values(TOPICS));
+function findIn(list,q){const n=norm(q).replace(/^(who (was|is)|tell me about|where (was|is)|the life of|story of|explain|what is|what s|what does the bible say about)\s+/,"").replace(/\?$/,"").trim();
+  if(!n)return null;return list.find(x=>norm(x)===n)||list.find(x=>norm(x).split(" ").some(w=>w.length>3&&w===n))||null}
+async function smartRoute(q){
+  q=q.trim();if(!q)return;const n=norm(q);buzz(10);
+  const ref=q.match(/^\s*((?:[1-3]\s*)?[A-Za-z][A-Za-z ]+?)\s+(\d+)(?::(\d+))?/);
+  const pr=ref?parseRef(`${ref[1].trim()} ${ref[2]}`):null;
+  if(pr&&ref&&norm(ref[1]).length>=3&&BOOKS.some(b=>norm(b[0]).startsWith(norm(ref[1]).replace(/^psalm$/,"psalms"))||norm(ref[1])==="psalm")){
+    toast(`Opening ${BOOKS[pr[0]][0]} ${pr[1]}`);await openChapter(pr[0],pr[1]);
+    if(ref[3]){const v=Number(ref[3]);setTimeout(()=>{const el=document.querySelector(`.v[data-v="${v}"]`);if(el){el.classList.add("sel");el.scrollIntoView({behavior:"smooth",block:"center"})}},350)}return}
+  const va=q.match(/^(?:bible\s+)?(?:verses?|scriptures?|passages?)\s+(?:about|on|for|when)\s+(.+)/i);
+  if(va)return versesAbout(va[1]);
+  const person=findIn(ALL_PEOPLE,q);if(person&&/who|about|life|story|^[a-z ,&]+$/i.test(q))return explainPerson(person);
+  const place=findIn(ALL_PLACES,q);if(place)return explainPlace(place);
+  const topic=findIn(ALL_TOPICS,q);if(topic)return explainTopic(topic);
+  if(/\b(video|videos|worship|song|songs|sermon|sermons|movie|film|music)\b/i.test(q)){show("study");setStudyMode("videos");videosHome();setTimeout(()=>{$("#vidIn").value=q;findVideos(q)},50);return}
+  if(/\btrivia|quiz\b/i.test(q)){show("study");return setStudyMode("trivia")}
+  if(/\b(\d+[- ]day )?(study )?plan\b/i.test(q)&&q.split(" ").length>2){return buildPlan(q.replace(/\b(make|create|build|me|a|an|study|plan|on|about|for)\b/gi," ").replace(/\s+/g," ").trim()||q,7,"","",true)}
+  // let the AI decide
+  const box=$("#smartOut");box.innerHTML=loadingHTML("Thinking…");box.hidden=false;
+  try{
+    const r=await askJSON(`A user typed this into a Bible app search box: "${q}". Decide what they want.
+JSON: {"type": one of "passage" (a Bible reference), "verses" (they want verses about a subject), "person" (a Bible person), "place" (a Bible place), "topic" (a theology/Christian living subject to explain), "question" (a question or request to answer in conversation), "value": the cleaned reference, subject, name or question}`,"quick");
+    box.hidden=true;box.innerHTML="";
+    const v=String(r.value||q);
+    if(r.type==="passage"){const p=parseRef(v);if(p)return openChapter(p[0],p[1])}
+    if(r.type==="verses")return versesAbout(v);
+    if(r.type==="person")return explainPerson(v);
+    if(r.type==="place")return explainPlace(v);
+    if(r.type==="topic")return explainTopic(v);
+    show("ask");return helperSend(q);
+  }catch(e){box.innerHTML=errHTML(e)}
+}
+async function versesAbout(term){
+  term=term.replace(/[?.!]+$/,"").trim();
+  openSheet(`<div style="font-size:38px">📖</div><div class="plan-title" style="font-size:24px;margin:4px 0">Verses about ${esc(term)}</div><div id="vaOut">${loadingHTML("Searching the Scriptures…")}</div>`);
+  try{
+    const r=await askJSON(`List 7 of the most helpful Bible verses about "${term}". Mix Old and New Testament. Quote each in the ${tr().name} (${tr().abbr}) exactly.
+JSON: {"verses":[{"ref":"Book C:V","text":"exact ${tr().abbr} text","note":"one short sentence on why it speaks to this"}]}`,"quick");
+    const out=$("#vaOut");if(!out)return;
+    out.innerHTML=(r.verses||[]).map((v,i)=>`<div class="kv va" style="animation-delay:${i*60}ms"><b>${esc(v.ref)}</b><div class="vt">“${esc(v.text)}”</div><div class="nt">${esc(v.note)}</div>
+      <div class="row" style="margin-top:6px">${parseRef(v.ref)?refLink(v.ref):""}<button class="btn sm ghost" data-save-va="${esc(v.ref)}|${esc(v.text)}">☆ Save</button></div></div>`).join("")+`<div class="tiny">${esc(tr().abbr)}</div>`;
+    markActive();save();
+  }catch(e){const o=$("#vaOut");if(o)o.innerHTML=errHTML(e)}
+}
+/* mood check-in */
+const MOODS=[["anxious","😟","Anxious"],["grateful","🙏","Grateful"],["tired","😴","Tired"],["joyful","😊","Joyful"],["sad","😢","Sad"],["stressed","😤","Stressed"],["weak","💪","Need strength"],["lonely","🥺","Lonely"],["confused","🤔","Confused"],["tempted","⚔️","Tempted"],["hopeful","🌅","Hopeful"],["angry","😠","Frustrated"]];
+function renderMood(){
+  const today=(S.moodLog||{})[todayKey()];
+  $("#moodChips").innerHTML=MOODS.map(([k,e,l])=>`<button class="mchip ${today&&today.mood===k?"on":""}" data-mood="${k}"><span>${e}</span>${l}</button>`).join("");
+  if(today&&today.res)$("#moodOut").innerHTML=moodHTML(today.mood,today.res);
+}
+function moodHTML(k,r){
+  const m=MOODS.find(x=>x[0]===k)||["","💬",""],plan=catalogItem(r.plan||"");
+  return `<div class="mood-res">
+    <div class="mood-head"><span class="mood-em">${m[1]}</span><span>${esc(r.title||"A word for you")}</span></div>
+    ${r.verse&&r.verse.text?`<div class="scrip-lite">“${esc(r.verse.text)}”<b>${esc(r.verse.ref)}</b></div>`:""}
+    <div class="prose"><p>${esc(r.word)}</p></div>
+    ${r.prayer?`<div class="prayer" style="font-size:16.5px">${esc(r.prayer)}</div><button class="amen" type="button"><span class="amen-fill"></span><span class="amen-txt">🙏 Hold to say Amen</span></button>`:""}
+    ${r.action?`<div class="reflect" style="margin-top:10px">✅ ${esc(r.action)}</div>`:""}
+    <div class="row" style="margin-top:12px">
+      ${plan?`<button class="btn sm gold" data-cat-plan="${esc(plan[0])}">${plan[2]} ${esc(plan[0])}</button>`:""}
+      ${r.video?`<a class="btn sm" rel="noopener" data-ext="1" href="${yt(r.video)}">▶ ${esc(r.video_label||"Watch")}</a>`:""}
+      <button class="btn sm" data-act="moodHelper">💬 Talk it through</button>
+    </div></div>`;
+}
+async function pickMood(k){
+  const m=MOODS.find(x=>x[0]===k);if(!m)return;buzz(12);
+  document.querySelectorAll(".mchip").forEach(b=>b.classList.toggle("on",b.dataset.mood===k));
+  S.moodLog=S.moodLog||{};const cached=S.moodLog[todayKey()];
+  if(cached&&cached.mood===k&&cached.res){$("#moodOut").innerHTML=moodHTML(k,cached.res);return}
+  $("#moodOut").innerHTML=loadingHTML(`Finding a word for when you're feeling ${m[2].toLowerCase()}…`);
+  try{
+    const r=await askJSON(`The user says they are feeling: ${m[2]}. Respond like a caring pastor-friend.
+Choose a fitting study plan title from this exact list (or "" if none fits): ${JSON.stringify([].concat(...CATALOG.map(c=>c.items.map(i=>i[0]))))}.
+JSON: {"title":"short warm heading","verse":{"ref":"Book C:V","text":"exact ${tr().abbr} text"},"word":"3–4 warm, personal sentences of encouragement rooted in the verse","prayer":"a short first-person prayer, 2–3 sentences","action":"one small, concrete thing to do today","plan":"exact plan title or empty","video":"a YouTube search query for a fitting worship song or short sermon","video_label":"2–4 word button label, e.g. 'Worship: Goodness of God'"}`,"quick");
+    if(!r||!r.word)throw {message:"Couldn't load that. Please try again."};
+    S.moodLog[todayKey()]={mood:k,res:r};const ks=Object.keys(S.moodLog).sort();while(ks.length>14)delete S.moodLog[ks.shift()];
+    markActive();save();$("#moodOut").innerHTML=moodHTML(k,r);
+  }catch(e){$("#moodOut").innerHTML=errHTML(e)}
+}
+/* For You: smart next steps from what you've been doing */
+function renderForYou(){
+  const el=$("#forYou");if(!el)return;const picks=[],P=planInfo();
+  if(P.today.length&&!S.done[P.day]){const nx=P.today.find(([b,c])=>!S.readCh[readKey(b,c)])||P.today[0];picks.push({ic:"📖",t:`Today's reading: ${rangeLabel(P.today)}`,s:"Your Bible-in-a-year plan",a:`data-open="${nx[0]}:${nx[1]}"`})}
+  const sp=plans().find(p=>nextDay(p)>=0);if(sp){const n=nextDay(sp);picks.push({ic:sp.emoji||"🗓",t:`${sp.title} · Day ${n+1}`,s:sp.outline[n].title,a:`data-plan-day="${sp.id}:${n}"`})}
+  const cc=COURSES.find(c=>{const pr=(S.courses||{})[c.id];return pr&&Object.values(pr.done||{}).some(Boolean)&&c.lessons.some((_,i)=>!pr.done[i])});
+  if(cc){const pr=S.courses[cc.id],i=cc.lessons.findIndex((_,k)=>!pr.done[k]);picks.push({ic:cc.ic,t:`Continue: ${cc.title}`,s:`Lesson ${i+1} · ${cc.lessons[i]}`,a:`data-lesson="${cc.id}:${i}"`})}
+  const t=T();if(!(t.daily[todayKey()]&&t.daily[todayKey()].done))picks.push({ic:"🎯",t:"Today's trivia challenge",s:"5 questions · keep your streak",a:`data-go="trivia"`});
+  if(!S.devos[todayKey()])picks.push({ic:"☀️",t:"Today's devotional",s:"A fresh word for today",a:`data-go="devo"`});
+  const lastBook=BOOKS[cur.bi][0];picks.push({ic:"▶️",t:`Watch: ${lastBook} overview`,s:"Animated book overview",a:`data-ext="1" href="${yt(`BibleProject ${lastBook} overview`)}"`,link:true});
+  if(!plans().length)picks.push({ic:"🗓",t:"Start a study plan",s:"Try “Overcoming anxiety” or “Becoming a man of God”",a:`data-go="plans"`});
+  const h=new Date().getHours(),greet=h<12?"Start your morning":h<17?"Keep going this afternoon":"Wind down tonight";
+  el.innerHTML=`<div class="label"><span class="dot"></span>✨ For you · ${greet}</div>
+    ${picks.slice(0,3).map(p=>p.link?`<a class="fy" rel="noopener" ${p.a}><span class="fy-ic">${p.ic}</span><span class="fy-t"><b>${esc(p.t)}</b><small>${esc(p.s)}</small></span><span class="fy-go">›</span></a>`:`<button class="fy" ${p.a}><span class="fy-ic">${p.ic}</span><span class="fy-t"><b>${esc(p.t)}</b><small>${esc(p.s)}</small></span><span class="fy-go">›</span></button>`).join("")}`;
+}
+/* voice input (Claude dictation, or the phone's speech recognition in the standalone app) */
+let dict=null,dictTarget=null;
+async function initMic(){
+  try{dict=await claude.use("dictation")}catch(e){dict=null}
+  if(!dict)return;
+  document.querySelectorAll(".mic").forEach(b=>b.hidden=false);
+  dict.onPartial&&dict.onPartial(({text})=>{if(dictTarget)dictTarget.dataset.partial=text;if(dictTarget)dictTarget.value=(dictTarget.dataset.base||"")+text});
+  dict.onFinal&&dict.onFinal(({text})=>{if(!dictTarget)return;dictTarget.dataset.base=((dictTarget.dataset.base||"")+text+" ");dictTarget.value=dictTarget.dataset.base});
+  dict.onState&&dict.onState(({state})=>{document.querySelectorAll(".mic").forEach(b=>b.classList.toggle("live",state==="listening"&&b.dataset.mic===(dictTarget&&dictTarget.id)));
+    if(state==="idle"&&dictTarget){const t=dictTarget;dictTarget=null;if(t.id==="smartIn"&&t.value.trim())smartRoute(t.value)}});
+}
+function micClick(btn){
+  if(!dict)return;const inp=$("#"+btn.dataset.mic);
+  if(btn.classList.contains("live")){dict.stop&&dict.stop();return}
+  dictTarget=inp;if(inp.id==="smartIn")inp.value="";inp.dataset.base=inp.value?inp.value+" ":"";buzz(10);
+  const p=dict.start();if(p&&p.catch)p.catch(e=>{toast(e&&e.code==="not_granted"?"Microphone not allowed — you can still type":"Couldn't start the microphone");dictTarget=null});
+}
+
 /* ---------- TTS ---------- */
 async function speak(text){
   if(!tts)return;
@@ -2395,7 +2587,7 @@ show(location.hash.slice(1)||"today",false);
     applyTheme(S.theme||lsGet("db-theme")||"royal");applyFont();if(BGX.mode!==(S.bg||"constellation"))applyBg();
     const tab=location.hash.slice(1)||"today";if(tab==="today")renderToday();if(tab==="journal")renderJournal();
   }catch(e){console.warn(e);$("#syncNote").textContent="Saved on this device only."}
-  ensureVotd();
+  ensureVotd();initMic();
   if(S.themeChosen)gestureTip();
   if(!S.themeChosen)setTimeout(()=>{if(!S.themeChosen&&!$("#sheet").classList.contains("on"))themePicker(true)},900);
 })();
