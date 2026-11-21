@@ -10,8 +10,8 @@ Bible people and places, trivia, guided study plans, Christian videos, journal, 
 - Progress, notes and settings are saved on each device (browser storage).
 
 ## Settings (Netlify → Project configuration → Environment variables)
-- `APP_CODE` — private code the app asks for once per device before it can use AI. Change it any time,
-  then redeploy.
+- `APP_CODE` (optional) — if set, the app asks for this code once per device before it can use AI.
+  Not set right now, so anyone can use the app. AI requests are rate-limited to 30 per minute per visitor.
 
 ## Deploys
 Every push to `main` deploys automatically once this repo is linked to the Netlify project.
