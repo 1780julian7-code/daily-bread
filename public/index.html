@@ -95,6 +95,7 @@ window.DB_STANDALONE = true;
       stop:async()=>{try{rec&&rec.stop()}catch(e){}},
       onPartial:f=>{onP=f},onFinal:f=>{onF=f},onState:f=>{onS=f}};
   }
+  window.fetchChapter=async(tr,b,c)=>{const r=await fetch(`/api/bible?tr=${encodeURIComponent(tr)}&b=${b}&c=${c}`);if(!r.ok)throw new Error("bible "+r.status);const d=await r.json();return d.verses};
   const caps={sample,db,user,tts,dictation};
   window.claude={use:async n=>caps[n]||null};
 })();
@@ -852,6 +853,17 @@ body.focus.nav-top header.top{display:none!important}
 .bar-yellow{border-left-color:#ffd640}.bar-green{border-left-color:#50dc8c}.bar-blue{border-left-color:#5aaaff}.bar-pink{border-left-color:#ff6eaa}.bar-purple{border-left-color:#aa78ff}
 .hl-note{font-size:14.5px;line-height:1.55;color:var(--text2);margin-top:6px;white-space:pre-wrap;background:rgba(127,127,127,.08);padding:8px 10px;border-radius:10px}
 body[data-theme="parchment"],body[data-theme="snow"]{--hy:rgba(255,200,0,.38);--hg:rgba(40,190,100,.28);--hb:rgba(40,130,255,.25);--hp:rgba(255,60,140,.24);--hu:rgba(140,80,255,.25)}
+
+/* =================== SPEED =================== */
+.vh{display:block;font-family:var(--sans);font-size:13px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:var(--gold);margin:16px 0 4px}
+.vh:first-child{margin-top:4px}
+.card{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+.aurora i{filter:none!important;mix-blend-mode:normal!important}
+.view.on>*{animation-duration:.28s!important;animation-delay:0s!important}
+.view.on{animation-duration:.2s!important}
+.view.on.slide-l,.view.on.slide-r{animation-duration:.2s!important}
+.tile::before{left:0!important;transform:translateX(-160%) skewX(-18deg);animation-name:sweep2!important;will-change:transform}
+@keyframes sweep2{0%,70%{transform:translateX(-160%) skewX(-18deg)}100%{transform:translateX(360%) skewX(-18deg)}}
 </style>
 </head>
 <body>
@@ -1367,24 +1379,36 @@ async function openChapter(bi,c,go=true){
   $("#bgLink").href=`https://www.biblegateway.com/passage/?search=${encodeURIComponent(refName())}&version=NIV`;
   $("#vidLink").href=yt(`BibleProject ${BOOKS[bi][0]} overview`);
   $("#prevCh").disabled=bi===0&&c===1;$("#nextCh").disabled=bi===65&&c===22;
-  const ck=`db-ch-${tr().abbr}-${bi}-${c}`,cached=lsGet(ck);
-  if(cached&&cached.length){curVerses=cached;drawVerses();markRead();return}
+  const ck=chKey(bi,c),cached=lsGet(ck);
+  if(cached&&(cached.v||cached).length){curFromApi=!!cached.api;curVerses=cached.v||cached;drawVerses();markRead();prefetchChapters(bi,c);return}
   $("#chText").innerHTML=loadingHTML(`Opening ${refName()}…`);
+  if(window.fetchChapter){try{const fv=await window.fetchChapter(tr().abbr,bi,c);if(cur.bi!==bi||cur.c!==c)return;
+    if(fv&&fv.length){curFromApi=true;curVerses=fv;lsSet(ck,{api:true,v:fv});drawVerses();markRead();prefetchChapters(bi,c);return}}catch(e){}}
   try{
     const r=await askJSON(`Return the complete text of ${refName()} in the ${tr().name} (${tr().abbr}), every verse in order, exact ${tr().abbr} wording, no headings or commentary. JSON: {"verses":[{"n":1,"t":"verse text"}, ...]}`, "default");
     if(cur.bi!==bi||cur.c!==c)return;
     if(!r||!Array.isArray(r.verses)||!r.verses.length)throw {message:"Couldn't load this chapter. Please try again."};
-    curVerses=r.verses.map(v=>({n:Number(v.n),t:String(v.t||"")}));lsSet(ck,curVerses);drawVerses();markRead();
+    curFromApi=false;curVerses=r.verses.map(v=>({n:Number(v.n),t:String(v.t||"")}));lsSet(ck,curVerses);drawVerses();markRead();
   }catch(e){if(cur.bi===bi&&cur.c===c)$("#chText").innerHTML=errHTML(e)+`<button class="btn sm" style="margin-top:10px" data-open="${bi}:${c}">Retry</button>`}
 }
 function markRead(){S.readCh[readKey(cur.bi,cur.c)]=true;markActive();
   const P=planInfo();if(P.today.length&&P.today.every(([b,c])=>S.readCh[readKey(b,c)])&&!S.done[P.day]){S.done[P.day]=true;toast("Today's reading complete 🎉")}
   save();$("#streakN").textContent=streak()}
+let curFromApi=false;
+const chKey=(bi,c)=>`db-ch2-${tr().abbr}-${bi}-${c}`;
+/* load upcoming chapters in the background so they open instantly */
+function prefetchChapters(bi,c){
+  if(!window.fetchChapter)return;
+  const list=[];if(c<BOOKS[bi][1])list.push([bi,c+1]);else if(bi<65)list.push([bi+1,1]);
+  planInfo().today.forEach(x=>list.push(x));
+  let delay=400;
+  list.forEach(([b,cc])=>{const k=chKey(b,cc);if(lsGet(k))return;setTimeout(()=>window.fetchChapter(tr().abbr,b,cc).then(v=>{if(v&&v.length)lsSet(k,{api:true,v})}).catch(()=>{}),delay);delay+=350});
+}
 function drawVerses(){
   const savedSet=new Set(S.savedVerses.map(v=>v.ref));
   const H=S.hl||{};
-  $("#chText").innerHTML=curVerses.map(v=>{const r=`${refName()}:${v.n}`,h=H[r];return `<span class="v ${savedSet.has(r)?"saved":""} ${h&&h.c?"hl hl-"+h.c:""}" data-v="${v.n}"><sup>${v.n}</sup>${esc(v.t)}${h&&h.n?`<span class="vn-ic" title="You have a note">📝</span>`:""}</span> `}).join("")+
-   `<div class="tiny" style="margin-top:14px;font-family:var(--sans)">Text provided by AI from the public-domain ${tr().name}. For study, compare with your own Bible.</div>`;
+  $("#chText").innerHTML=curVerses.map(v=>{const r=`${refName()}:${v.n}`,h=H[r];return `${v.h?`<span class="vh">${esc(v.h)}</span>`:""}<span class="v ${savedSet.has(r)?"saved":""} ${h&&h.c?"hl hl-"+h.c:""}" data-v="${v.n}"><sup>${v.n}</sup>${esc(v.t)}${h&&h.n?`<span class="vn-ic" title="You have a note">📝</span>`:""}</span> `}).join("")+
+   `<div class="tiny" style="margin-top:14px;font-family:var(--sans)">${curFromApi?`${tr().name} · text from the Free Use Bible API.`:`Text provided by AI from the public-domain ${tr().name}. For study, compare with your own Bible.`}</div>`;
 }
 function verseSheet(n){
   const v=curVerses.find(x=>x.n===n);if(!v)return;
@@ -2660,15 +2684,17 @@ const BGX=(function(){
   const rgba=(c,a)=>`rgba(${c[0]},${c[1]},${c[2]},${a})`;
   function readCols(){const cs=getComputedStyle(document.body);cols=[rgb(cs.getPropertyValue("--gold")),rgb(cs.getPropertyValue("--rose")),rgb(cs.getPropertyValue("--violet"))]}
   function build(){
-    dpr=Math.min(2,devicePixelRatio||1);W=innerWidth;H=innerHeight;c.width=W*dpr;c.height=H*dpr;c.style.width=W+"px";c.style.height=H+"px";x.setTransform(dpr,0,0,dpr,0,0);
+    dpr=Math.min(1.5,devicePixelRatio||1);W=innerWidth;H=innerHeight;c.width=W*dpr;c.height=H*dpr;c.style.width=W+"px";c.style.height=H+"px";x.setTransform(dpr,0,0,dpr,0,0);
     const area=W*H/10000,R=Math.random;
-    if(mode==="constellation")N=Array.from({length:Math.min(90,Math.round(area*.55)+24)},()=>({x:R()*W,y:R()*H,vx:(R()-.5)*.25,vy:(R()-.5)*.25,r:R()*1.6+.8,c:Math.floor(R()*3),p:R()*6.28}));
+    if(mode==="constellation")N=Array.from({length:Math.min(70,Math.round(area*.42)+20)},()=>({x:R()*W,y:R()*H,vx:(R()-.5)*.25,vy:(R()-.5)*.25,r:R()*1.6+.8,c:Math.floor(R()*3),p:R()*6.28}));
     else if(mode==="fireflies")N=Array.from({length:Math.min(46,Math.round(area*.3)+14)},()=>({x:R()*W,y:R()*H,a:R()*6.28,sp:R()*.35+.15,r:R()*2.2+1.4,c:Math.floor(R()*3),p:R()*6.28}));
     else if(mode==="rays")N=Array.from({length:Math.min(60,Math.round(area*.4)+16)},()=>({x:R()*W,y:R()*H,r:R()*1.6+.4,s:R()*.18+.04,dx:(R()-.5)*.15,p:R()*6.28}));
     else if(mode==="waves"||mode==="aurora")N=Array.from({length:Math.min(70,Math.round(area*.4)+20)},()=>({x:R()*W,y:R()*H*(mode==="waves"?.62:1),r:R()*1.3+.3,s:R()*.22+.05,p:R()*6.28}));
     else N=[];
   }
+  let lastT=0;
   function frame(t){
+    if(t-lastT<22&&!rm){raf=requestAnimationFrame(frame);return}lastT=t;
     x.clearRect(0,0,W,H);
     if(mode==="constellation"){
       const L=118;
