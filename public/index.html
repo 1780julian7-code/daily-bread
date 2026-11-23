@@ -912,6 +912,8 @@ body.dock-open .toast{bottom:calc(290px + env(safe-area-inset-bottom))!important
 body.dock-open.nav-top .hbar{bottom:calc(272px + env(safe-area-inset-bottom))}
 .spot{display:flex;align-items:center;gap:12px;margin-top:12px;padding:12px;border-radius:16px;text-decoration:none;color:#fff;background:linear-gradient(135deg,#1db954,#128a3e);box-shadow:0 10px 24px -10px rgba(29,185,84,.6)}
 .spot-ic{font-size:24px}.spot b{display:block;font-size:14.5px}.spot small{display:block;font-size:12px;opacity:.9}.spot .fy-go{color:#fff;margin-left:auto}
+.spot.yt{background:linear-gradient(135deg,#ff3b3b,#c4162a);box-shadow:0 10px 24px -10px rgba(230,33,23,.6)}
+.sd-bar button[data-sd="bg"]{font-size:16px}
 </style>
 </head>
 <body>
@@ -1179,7 +1181,7 @@ body.dock-open.nav-top .hbar{bottom:calc(272px + env(safe-area-inset-bottom))}
 <div id="songDock" hidden>
   <div class="sd-video"><div id="ytPlayer"></div></div>
   <div class="sd-bar"><span class="sd-eq"><i></i><i></i><i></i></span><div class="sd-info"><b id="sdTitle">Worship</b><small id="sdArtist"></small></div>
-    <button data-sd="prev" aria-label="Previous">⏮</button><button data-sd="toggle" id="sdToggle" aria-label="Play or pause">⏸</button><button data-sd="next" aria-label="Next">⏭</button><button data-sd="close" aria-label="Close player">✕</button></div>
+    <button data-sd="prev" aria-label="Previous">⏮</button><button data-sd="toggle" id="sdToggle" aria-label="Play or pause">⏸</button><button data-sd="next" aria-label="Next">⏭</button><button data-sd="bg" aria-label="Listen in the background">🎧</button><button data-sd="close" aria-label="Close player">✕</button></div>
 </div>
 <button id="musicFab" aria-label="Worship music"><span class="mf-ic">🎵</span><span class="mf-bars"><i></i><i></i><i></i><i></i></span></button>
 <button id="focusX" aria-label="Exit focus mode">✕ Exit focus</button>
@@ -2155,6 +2157,7 @@ window.addEventListener("hashchange",()=>show(location.hash.slice(1),false));
 document.addEventListener("click",e=>{
   if(e.target.closest("#sheetX"))return closeSheet();
   const ext=e.target.closest("a[data-ext]");
+  if(ext&&ext.dataset.handoff&&typeof SP!=="undefined")SP.pause();
   if(ext&&window.DB_STANDALONE){ext.target="_blank";buzz(8);return}
   if(ext){e.preventDefault();buzz(8);const title=(ext.querySelector("b")||ext).textContent.trim().replace(/[↗▶]/g,"").trim();return linkSheet(ext.href,title)}
   if(e.target.closest("#focusX"))return toggleFocus(false);
@@ -2189,7 +2192,7 @@ document.addEventListener("click",e=>{
   if(t.dataset.delsong){S.mySongs=(S.mySongs||[]).filter(x=>x.id!==t.dataset.delsong);save();toast("Song removed");const b=$("#songsBox");if(b)b.innerHTML=songsHTML();return}
   if(t.dataset.act==="songsAll"){buzz(10);const l=shownSongs();return SP.playList(l,M().shuffle?Math.floor(Math.random()*l.length):0)}
   if(t.dataset.act==="songsShuffle"){M().shuffle=!M().shuffle;save();t.textContent=`🔀 Shuffle ${M().shuffle?"on":"off"}`;t.classList.toggle("on",M().shuffle);return}
-  if(t.dataset.sd){buzz(8);const a=t.dataset.sd;if(a==="prev")return SP.prev();if(a==="next")return SP.next();if(a==="toggle")return SP.toggle();if(a==="close")return SP.close()}
+  if(t.dataset.sd){buzz(8);const a=t.dataset.sd;if(a==="prev")return SP.prev();if(a==="next")return SP.next();if(a==="toggle")return SP.toggle();if(a==="close")return SP.close();if(a==="bg")return bgSheet()}
   if(t.id==="musicFab"||t.dataset.act==="music"){buzz(10);return musicSheet()}
   if(t.id==="musicPlay"){M();if(MUS.playing)MUS.stop();else MUS.play();buzz(12);return}
   if(t.dataset.mstyle){M().style=t.dataset.mstyle;save();document.querySelectorAll("[data-mstyle]").forEach(b=>b.classList.toggle("on",b===t));if(MUS.playing)MUS.restart();else MUS.play();return}
@@ -2807,7 +2810,8 @@ const SP=(function(){
     document.querySelectorAll("[data-song]").forEach(r=>r.classList.toggle("now",!!s&&r.dataset.song===s.id));
     const fab=$("#musicFab");if(fab)fab.classList.toggle("playing",playing||MUS.playing);
   }
-  return {playList,next,prev,toggle,close,pause,ui,get playing(){return playing}};
+  function current(){return queue[idx]||null}
+  return {playList,next,prev,toggle,close,pause,ui,current,get playing(){return playing}};
 })();
 function allSongs(){return SONGS.concat((S.mySongs||[]).map(x=>({...x,custom:true,g:"mine"})))}
 function shownSongs(){const f=M().sf||"all";return allSongs().filter(x=>f==="all"||x.g===f)}
@@ -2825,6 +2829,14 @@ function songsHTML(){
     <form id="addSongForm" class="askrow"><input type="text" id="addSongIn" placeholder="Paste a YouTube link…" autocomplete="off"><button class="btn gold" type="submit">Add</button></form>
     ${mine?`<div class="sub">Songs you added</div><div class="chips">${(S.mySongs||[]).map(x=>`<button class="chip" data-delsong="${x.id}">✕ ${esc(x.t.length>28?x.t.slice(0,28)+"…":x.t)}</button>`).join("")}</div>`:""}
     <div class="tiny" style="margin-top:10px">Songs stream from the artists' official YouTube videos. If a song can't play here, it's skipped automatically.</div>`;
+}
+function bgSheet(){
+  const sg=SP.current();
+  openSheet(`<div style="font-size:40px">🎧</div><div class="plan-title" style="font-size:24px;margin:4px 0">Keep listening in the background</div>
+    <p class="muted" style="font-size:14px;line-height:1.5;margin-bottom:12px">YouTube videos inside Daily Bread have to stay on screen, and stop when you leave the app or lock your phone. To keep the music going, continue in one of these apps:</p>
+    <a class="spot" rel="noopener" data-ext="1" data-handoff="1" href="https://open.spotify.com/playlist/0JXf0WLyIK9En7igqCPzY3"><span class="spot-ic">🎵</span><span><b>Continue in Spotify</b><small>Daily Bread Worship playlist · keeps playing when your phone is locked · works in the car</small></span><span class="fy-go">›</span></a>
+    ${sg?`<a class="spot yt" rel="noopener" data-ext="1" data-handoff="1" href="${ytWatch(sg.id)}"><span class="spot-ic">▶️</span><span><b>Open “${esc(sg.t)}” in YouTube</b><small>Plays in the background with YouTube Premium</small></span><span class="fy-go">›</span></a>`:""}
+    <div class="tiny" style="margin-top:12px">The song playing here pauses when you switch, so they don't overlap.</div>`);
 }
 function ytId(u){u=String(u||"").trim();const m=u.match(/(?:v=|youtu\.be\/|shorts\/|embed\/|live\/)([\w-]{11})/);return m?m[1]:(/^[\w-]{11}$/.test(u)?u:null)}
 async function addSong(u){
