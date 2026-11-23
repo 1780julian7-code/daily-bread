@@ -2182,9 +2182,10 @@ document.addEventListener("click",e=>{
   if(t.dataset.hlDel){const[k,r]=t.dataset.hlDel.split("|");if(k==="c"){delete (S.chNotes||{})[r]}else{delete (S.hl||{})[r]}save();toast("Removed");return renderHighlights()}
   if(t.dataset.openV){const[bi,c,v]=t.dataset.openV.split(":");openChapter(Number(bi),Number(c)).then(()=>{if(v){setTimeout(()=>{const el=document.querySelector(`.v[data-v="${v}"]`);if(el){el.classList.add("sel");el.scrollIntoView({behavior:"smooth",block:"center"})}},350)}});return}
   if(t.dataset.mtab){M().tab=t.dataset.mtab;save();document.querySelectorAll("#musicTabs button").forEach(b=>b.classList.toggle("on",b===t));$("#songsBox").hidden=t.dataset.mtab!=="songs";$("#padsBox").hidden=t.dataset.mtab!=="pads";return}
-  if(t.dataset.si!==undefined&&canEmbed()){buzz(10);SP.playList(allSongs(),Number(t.dataset.si));return}
+  if(t.dataset.sf){M().sf=t.dataset.sf;save();const b=$("#songsBox");if(b)b.innerHTML=songsHTML();return}
+  if(t.dataset.si!==undefined&&canEmbed()){buzz(10);SP.playList(shownSongs(),Number(t.dataset.si));return}
   if(t.dataset.delsong){S.mySongs=(S.mySongs||[]).filter(x=>x.id!==t.dataset.delsong);save();toast("Song removed");const b=$("#songsBox");if(b)b.innerHTML=songsHTML();return}
-  if(t.dataset.act==="songsAll"){buzz(10);const l=allSongs();return SP.playList(l,M().shuffle?Math.floor(Math.random()*l.length):0)}
+  if(t.dataset.act==="songsAll"){buzz(10);const l=shownSongs();return SP.playList(l,M().shuffle?Math.floor(Math.random()*l.length):0)}
   if(t.dataset.act==="songsShuffle"){M().shuffle=!M().shuffle;save();t.textContent=`🔀 Shuffle ${M().shuffle?"on":"off"}`;t.classList.toggle("on",M().shuffle);return}
   if(t.dataset.sd){buzz(8);const a=t.dataset.sd;if(a==="prev")return SP.prev();if(a==="next")return SP.next();if(a==="toggle")return SP.toggle();if(a==="close")return SP.close()}
   if(t.id==="musicFab"||t.dataset.act==="music"){buzz(10);return musicSheet()}
@@ -2728,19 +2729,36 @@ function renderHighlights(){
 
 /* ---------- Worship songs (in-app YouTube player in the phone app) ---------- */
 const SONGS=[
- {id:"9sE5kEnitqE",t:"Goodness of God",a:"CeCe Winans"},
- {id:"mC-zw0zCCtg",t:"Jireh",a:"Elevation Worship & Maverick City"},
- {id:"Na6P_kLI2FE",t:"Gratitude",a:"Brandon Lake"},
- {id:"nQWFzMvCfLE",t:"What A Beautiful Name",a:"Hillsong Worship"},
- {id:"rjXjkbODrro",t:"This Is Amazing Grace",a:"Phil Wickham"},
- {id:"iJCV_2H9xD0",t:"Way Maker",a:"Leeland"},
- {id:"XtwIT8JjddM",t:"10,000 Reasons (Bless the Lord)",a:"Matt Redman"},
- {id:"KwX1f2gYKZ4",t:"Graves Into Gardens",a:"Elevation Worship ft. Brandon Lake"},
- {id:"SlEEgMWwxhc",t:"Holy Forever",a:"Chris Tomlin ft. Jenn & Brian Johnson"},
- {id:"x9ndiD0_qNk",t:"Firm Foundation (He Won't)",a:"Cody Carnes"},
- {id:"dQl4izxPeNU",t:"King of Kings",a:"Hillsong Worship"},
- {id:"FYMjO9mL0Tw",t:"Build My Life",a:"Housefires ft. Pat Barrett"}
+ {id:"9sE5kEnitqE",t:"Goodness of God",a:"CeCe Winans",g:"gospel"},
+ {id:"mC-zw0zCCtg",t:"Jireh",a:"Elevation Worship & Maverick City",g:"worship"},
+ {id:"Na6P_kLI2FE",t:"Gratitude",a:"Brandon Lake",g:"worship"},
+ {id:"nQWFzMvCfLE",t:"What A Beautiful Name",a:"Hillsong Worship",g:"worship"},
+ {id:"rjXjkbODrro",t:"This Is Amazing Grace",a:"Phil Wickham",g:"worship"},
+ {id:"iJCV_2H9xD0",t:"Way Maker",a:"Leeland",g:"worship"},
+ {id:"XtwIT8JjddM",t:"10,000 Reasons (Bless the Lord)",a:"Matt Redman",g:"hymns"},
+ {id:"KwX1f2gYKZ4",t:"Graves Into Gardens",a:"Elevation Worship ft. Brandon Lake",g:"worship"},
+ {id:"SlEEgMWwxhc",t:"Holy Forever",a:"Chris Tomlin ft. Jenn & Brian Johnson",g:"worship"},
+ {id:"x9ndiD0_qNk",t:"Firm Foundation (He Won't)",a:"Cody Carnes",g:"worship"},
+ {id:"dQl4izxPeNU",t:"King of Kings",a:"Hillsong Worship",g:"worship"},
+ {id:"FYMjO9mL0Tw",t:"Build My Life",a:"Housefires ft. Pat Barrett",g:"worship"},
+ {id:"f2oxGYpuLkw",t:"Praise",a:"Elevation Worship ft. Brandon Lake, Chris Brown & Chandler Moore",g:"worship"},
+ {id:"Zp6aygmvzM4",t:"The Blessing",a:"Kari Jobe & Cody Carnes · Elevation Worship",g:"worship"},
+ {id:"OP-00EwLdiU",t:"Oceans (Where Feet May Fail)",a:"Hillsong UNITED",g:"worship"},
+ {id:"Sc6SSHuZvQE",t:"Reckless Love",a:"Cory Asbury",g:"worship"},
+ {id:"G2XtRuPfaAU",t:"Raise A Hallelujah",a:"Bethel Music, Jonathan & Melissa Helser",g:"worship"},
+ {id:"lKw6uqtGFfo",t:"Who You Say I Am",a:"Hillsong Worship",g:"worship"},
+ {id:"7UuM3X4VToI",t:"Same God",a:"Elevation Worship ft. Jonsal Barrientes & Brandon Lake",g:"worship"},
+ {id:"qtvQNzPHn-w",t:"Battle Belongs",a:"Phil Wickham",g:"worship"},
+ {id:"qlsQrycKKsY",t:"Good Good Father",a:"Chris Tomlin ft. Pat Barrett",g:"worship"},
+ {id:"gy9Z_gAE4dI",t:"I Speak Jesus",a:"Charity Gayle ft. Steven Musso",g:"worship"},
+ {id:"RGm3D8G49dM",t:"Break Every Chain",a:"Tasha Cobbs Leonard",g:"gospel"},
+ {id:"I5ncJbm_STc",t:"Total Praise",a:"Richard Smallwood & Vision",g:"gospel"},
+ {id:"Y-4NFvI5U9w",t:"Amazing Grace (My Chains Are Gone)",a:"Chris Tomlin",g:"hymns"},
+ {id:"8Wb_WD1emFQ",t:"It Is Well",a:"Kristene DiMarco · Bethel Music",g:"hymns"},
+ {id:"mshz89vfK3Q",t:"In Christ Alone",a:"Keith & Kristyn Getty",g:"hymns"},
+ {id:"BRPGRdbGHSs",t:"I Can Only Imagine",a:"MercyMe",g:"hymns"}
 ];
+const SONG_FILTERS=[["all","All"],["worship","Modern worship"],["gospel","Gospel"],["hymns","Hymns & classics"],["mine","My songs"]];
 const canEmbed=()=>!!window.DB_STANDALONE;
 const ytWatch=id=>`https://www.youtube.com/watch?v=${id}`;
 const SP=(function(){
@@ -2789,15 +2807,17 @@ const SP=(function(){
   }
   return {playList,next,prev,toggle,close,pause,ui,get playing(){return playing}};
 })();
-function allSongs(){return SONGS.concat((S.mySongs||[]).map(x=>({...x,custom:true})))}
+function allSongs(){return SONGS.concat((S.mySongs||[]).map(x=>({...x,custom:true,g:"mine"})))}
+function shownSongs(){const f=M().sf||"all";return allSongs().filter(x=>f==="all"||x.g===f)}
 function songRow(sg,i){
   return canEmbed()?`<button class="song" data-song="${sg.id}" data-si="${i}"><span class="song-n">${i+1}</span><span class="song-t"><b>${esc(sg.t)}</b><small>${esc(sg.a||"Your song")}</small></span><span class="song-play">▶</span></button>`
     :`<a class="song" data-song="${sg.id}" rel="noopener" data-ext="1" href="${ytWatch(sg.id)}"><span class="song-n">${i+1}</span><span class="song-t"><b>${esc(sg.t)}</b><small>${esc(sg.a||"Your song")}</small></span><span class="song-play">↗</span></a>`;
 }
 function songsHTML(){
-  const list=allSongs(),mine=(S.mySongs||[]).length;
+  const list=shownSongs(),mine=(S.mySongs||[]).length,f=M().sf||"all";
   return `${canEmbed()?`<div class="row" style="margin:4px 0 12px"><button class="btn gold" data-act="songsAll" style="flex:1">▶ Play all</button><button class="btn ${M().shuffle?"on":""}" data-act="songsShuffle" id="shufBtn" style="flex:1">🔀 Shuffle ${M().shuffle?"on":"off"}</button></div>`:`<div class="tiny" style="margin:4px 0 10px">Songs open in YouTube here. In the Daily Bread phone app they play right inside the app.</div>`}
-    <div class="songs">${list.map((sg,i)=>songRow(sg,i)).join("")}</div>
+    <div class="chips" style="margin-bottom:10px">${SONG_FILTERS.filter(([k])=>k!=="mine"||mine).map(([k,l])=>`<button class="chip ${f===k?"on":""}" data-sf="${k}">${l}${k==="all"?` · ${allSongs().length}`:""}</button>`).join("")}</div>
+    <div class="songs">${list.length?list.map((sg,i)=>songRow(sg,i)).join(""):`<div class="muted">No songs here yet.</div>`}</div>
     <div class="sub">Add your own song</div>
     <form id="addSongForm" class="askrow"><input type="text" id="addSongIn" placeholder="Paste a YouTube link…" autocomplete="off"><button class="btn gold" type="submit">Add</button></form>
     ${mine?`<div class="sub">Songs you added</div><div class="chips">${(S.mySongs||[]).map(x=>`<button class="chip" data-delsong="${x.id}">✕ ${esc(x.t.length>28?x.t.slice(0,28)+"…":x.t)}</button>`).join("")}</div>`:""}
