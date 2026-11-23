@@ -885,6 +885,31 @@ body.focus #musicFab{opacity:.75}
 .music-orb{width:60px;height:60px;border-radius:50%;display:grid;place-items:center;font-size:28px;background:var(--grad);box-shadow:0 0 30px -4px var(--glowc);flex:none}
 .music-orb.playing{animation:spin 8s linear infinite}
 .vol{width:100%;accent-color:var(--rose);height:28px}
+
+/* =================== WORSHIP SONGS =================== */
+.songs{display:flex;flex-direction:column;gap:6px}
+.song{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:10px 12px;border-radius:14px;background:var(--card2);border:1px solid var(--line);color:var(--text);text-decoration:none;transition:transform .15s}
+.song:active{transform:scale(.98)}
+.song-n{flex:none;width:26px;text-align:center;font-weight:800;color:var(--muted);font-size:13px}
+.song-t{flex:1;min-width:0}.song-t b{display:block;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.song-t small{display:block;font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.song-play{flex:none;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:var(--grad);color:#fff;font-size:12px;padding-left:2px}
+.song.now{border-color:var(--rose);background:color-mix(in srgb,var(--rose) 14%,transparent)}
+.song.now .song-n{color:var(--rose)}
+#songDock{position:fixed;left:10px;right:10px;bottom:calc(10px + env(safe-area-inset-bottom));z-index:26;border-radius:20px;overflow:hidden;background:var(--dock);border:1px solid var(--line);
+  box-shadow:0 20px 50px -12px rgba(0,0,0,.75);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);max-width:520px;margin:0 auto;animation:rise .35s cubic-bezier(.2,.8,.2,1)}
+.sd-video{position:relative;width:100%;height:200px;background:#000}
+.sd-video iframe,.sd-video #ytPlayer{position:absolute;inset:0;width:100%;height:100%;border:0}
+.sd-bar{display:flex;align-items:center;gap:6px;padding:8px 10px}
+.sd-info{flex:1;min-width:0}.sd-info b{display:block;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.sd-info small{display:block;font-size:11.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sd-bar button{flex:none;width:38px;height:38px;border-radius:12px;background:var(--card2);font-size:15px;color:var(--text)}
+.sd-bar #sdToggle{background:var(--grad);color:#fff}
+.sd-eq{display:flex;gap:2px;align-items:flex-end;height:16px;width:16px;flex:none}
+.sd-eq i{width:3px;height:4px;border-radius:2px;background:var(--rose)}
+#songDock.playing .sd-eq i{animation:eq 1s ease-in-out infinite}#songDock.playing .sd-eq i:nth-child(2){animation-delay:.25s}#songDock.playing .sd-eq i:nth-child(3){animation-delay:.5s}
+body.dock-open{padding-bottom:calc(290px + env(safe-area-inset-bottom))!important}
+body.dock-open #musicFab{bottom:calc(282px + env(safe-area-inset-bottom))!important}
+body.dock-open .toast{bottom:calc(290px + env(safe-area-inset-bottom))!important}
+body.dock-open.nav-top .hbar{bottom:calc(272px + env(safe-area-inset-bottom))}
 </style>
 </head>
 <body>
@@ -1149,6 +1174,11 @@ body.focus #musicFab{opacity:.75}
 <div class="sheet" id="sheet"><div class="grab"></div><button class="sheet-x" id="sheetX" aria-label="Close">✕</button><div id="sheetBody"></div></div>
 <div class="toast" id="toast"></div>
 <div id="ptr" aria-hidden="true">↻</div>
+<div id="songDock" hidden>
+  <div class="sd-video"><div id="ytPlayer"></div></div>
+  <div class="sd-bar"><span class="sd-eq"><i></i><i></i><i></i></span><div class="sd-info"><b id="sdTitle">Worship</b><small id="sdArtist"></small></div>
+    <button data-sd="prev" aria-label="Previous">⏮</button><button data-sd="toggle" id="sdToggle" aria-label="Play or pause">⏸</button><button data-sd="next" aria-label="Next">⏭</button><button data-sd="close" aria-label="Close player">✕</button></div>
+</div>
 <button id="musicFab" aria-label="Worship music"><span class="mf-ic">🎵</span><span class="mf-bars"><i></i><i></i><i></i><i></i></span></button>
 <button id="focusX" aria-label="Exit focus mode">✕ Exit focus</button>
 
@@ -2151,6 +2181,12 @@ document.addEventListener("click",e=>{
   if(t.dataset.hlf){$("#hlList").dataset.f=t.dataset.hlf;return renderHighlights()}
   if(t.dataset.hlDel){const[k,r]=t.dataset.hlDel.split("|");if(k==="c"){delete (S.chNotes||{})[r]}else{delete (S.hl||{})[r]}save();toast("Removed");return renderHighlights()}
   if(t.dataset.openV){const[bi,c,v]=t.dataset.openV.split(":");openChapter(Number(bi),Number(c)).then(()=>{if(v){setTimeout(()=>{const el=document.querySelector(`.v[data-v="${v}"]`);if(el){el.classList.add("sel");el.scrollIntoView({behavior:"smooth",block:"center"})}},350)}});return}
+  if(t.dataset.mtab){M().tab=t.dataset.mtab;save();document.querySelectorAll("#musicTabs button").forEach(b=>b.classList.toggle("on",b===t));$("#songsBox").hidden=t.dataset.mtab!=="songs";$("#padsBox").hidden=t.dataset.mtab!=="pads";return}
+  if(t.dataset.si!==undefined&&canEmbed()){buzz(10);SP.playList(allSongs(),Number(t.dataset.si));return}
+  if(t.dataset.delsong){S.mySongs=(S.mySongs||[]).filter(x=>x.id!==t.dataset.delsong);save();toast("Song removed");const b=$("#songsBox");if(b)b.innerHTML=songsHTML();return}
+  if(t.dataset.act==="songsAll"){buzz(10);const l=allSongs();return SP.playList(l,M().shuffle?Math.floor(Math.random()*l.length):0)}
+  if(t.dataset.act==="songsShuffle"){M().shuffle=!M().shuffle;save();t.textContent=`🔀 Shuffle ${M().shuffle?"on":"off"}`;t.classList.toggle("on",M().shuffle);return}
+  if(t.dataset.sd){buzz(8);const a=t.dataset.sd;if(a==="prev")return SP.prev();if(a==="next")return SP.next();if(a==="toggle")return SP.toggle();if(a==="close")return SP.close()}
   if(t.id==="musicFab"||t.dataset.act==="music"){buzz(10);return musicSheet()}
   if(t.id==="musicPlay"){M();if(MUS.playing)MUS.stop();else MUS.play();buzz(12);return}
   if(t.dataset.mstyle){M().style=t.dataset.mstyle;save();document.querySelectorAll("[data-mstyle]").forEach(b=>b.classList.toggle("on",b===t));if(MUS.playing)MUS.restart();else MUS.play();return}
@@ -2259,7 +2295,7 @@ $("#hForm").addEventListener("submit",e=>{e.preventDefault();const q=$("#hIn").v
 $("#hIn").addEventListener("input",e=>{e.target.style.height="auto";e.target.style.height=Math.min(130,e.target.scrollHeight)+"px"});
 $("#hIn").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey&&matchMedia("(pointer:fine)").matches){e.preventDefault();$("#hForm").requestSubmit()}});
 document.addEventListener("change",e=>{if(e.target.id==="vidBook"){const b=BOOKS[Number(e.target.value)][0],a=$("#vidBookGo");a.href=yt(`BibleProject ${b} overview`);a.textContent=`▶ Watch ${b} overview`}});
-document.addEventListener("submit",e=>{if(e.target.id==="smartForm"){e.preventDefault();const i=$("#smartIn");smartRoute(i.value);i.blur();return}if(e.target.id==="vidForm"){e.preventDefault();return findVideos($("#vidIn").value)}if(e.target.id==="customPlanForm"){e.preventDefault();const t=$("#cpTopic").value.trim();if(!t)return $("#cpTopic").focus();buildPlan(t,Number($("#cpDays").value),"","",true)}});
+document.addEventListener("submit",e=>{if(e.target.id==="addSongForm"){e.preventDefault();const i=$("#addSongIn");addSong(i.value);i.value="";return}if(e.target.id==="smartForm"){e.preventDefault();const i=$("#smartIn");smartRoute(i.value);i.blur();return}if(e.target.id==="vidForm"){e.preventDefault();return findVideos($("#vidIn").value)}if(e.target.id==="customPlanForm"){e.preventDefault();const t=$("#cpTopic").value.trim();if(!t)return $("#cpTopic").focus();buildPlan(t,Number($("#cpDays").value),"","",true)}});
 $("#placeForm").addEventListener("submit",e=>{e.preventDefault();explainPlace($("#placeIn").value)});
 $("#personForm").addEventListener("submit",e=>{e.preventDefault();explainPerson($("#personIn").value)});
 $("#topicForm").addEventListener("submit",e=>{e.preventDefault();explainTopic($("#topicIn").value)});
@@ -2690,6 +2726,93 @@ function renderHighlights(){
    :`<div class="muted">${items.length?"Nothing in this filter yet.":"Tap any verse while reading to highlight it or add a note. They'll all appear here."}</div>`;
 }
 
+/* ---------- Worship songs (in-app YouTube player in the phone app) ---------- */
+const SONGS=[
+ {id:"9sE5kEnitqE",t:"Goodness of God",a:"CeCe Winans"},
+ {id:"mC-zw0zCCtg",t:"Jireh",a:"Elevation Worship & Maverick City"},
+ {id:"Na6P_kLI2FE",t:"Gratitude",a:"Brandon Lake"},
+ {id:"nQWFzMvCfLE",t:"What A Beautiful Name",a:"Hillsong Worship"},
+ {id:"rjXjkbODrro",t:"This Is Amazing Grace",a:"Phil Wickham"},
+ {id:"iJCV_2H9xD0",t:"Way Maker",a:"Leeland"},
+ {id:"XtwIT8JjddM",t:"10,000 Reasons (Bless the Lord)",a:"Matt Redman"},
+ {id:"KwX1f2gYKZ4",t:"Graves Into Gardens",a:"Elevation Worship ft. Brandon Lake"},
+ {id:"SlEEgMWwxhc",t:"Holy Forever",a:"Chris Tomlin ft. Jenn & Brian Johnson"},
+ {id:"x9ndiD0_qNk",t:"Firm Foundation (He Won't)",a:"Cody Carnes"},
+ {id:"dQl4izxPeNU",t:"King of Kings",a:"Hillsong Worship"},
+ {id:"FYMjO9mL0Tw",t:"Build My Life",a:"Housefires ft. Pat Barrett"}
+];
+const canEmbed=()=>!!window.DB_STANDALONE;
+const ytWatch=id=>`https://www.youtube.com/watch?v=${id}`;
+const SP=(function(){
+  let player=null,apiP=null,queue=[],idx=0,playing=false,fails=0;
+  function api(){
+    if(apiP)return apiP;
+    apiP=new Promise(res=>{
+      if(window.YT&&window.YT.Player)return res(true);
+      const prev=window.onYouTubeIframeAPIReady;window.onYouTubeIframeAPIReady=()=>{if(prev)prev();res(true)};
+      const sc=document.createElement("script");sc.src="https://www.youtube.com/iframe_api";sc.onerror=()=>{apiP=null;res(false)};document.head.appendChild(sc);
+      setTimeout(()=>res(!!(window.YT&&window.YT.Player)),12000);
+    });
+    return apiP;
+  }
+  async function ensure(){
+    showDock();
+    if(player)return true;
+    const ok=await api();if(!ok||!window.YT||!window.YT.Player){hideDock();toast("Couldn't reach YouTube — check your internet");return false}
+    await new Promise(res=>{player=new YT.Player("ytPlayer",{width:"100%",height:"100%",playerVars:{playsinline:1,rel:0,modestbranding:1,origin:location.origin},
+      events:{onReady:()=>res(),onStateChange:onState,onError:onErr}})});
+    return true;
+  }
+  function onState(e){
+    if(e.data===0)return next(true);
+    playing=e.data===1;if(playing)fails=0;ui();
+    if(playing){const s=queue[idx],d=player.getVideoData&&player.getVideoData();if(s&&s.custom&&d&&d.title&&s.t!==d.title){s.t=d.title;const m=(S.mySongs||[]).find(x=>x.id===s.id);if(m){m.t=d.title;save()}ui()}}
+  }
+  function onErr(){fails++;if(fails>=Math.min(queue.length,4)){toast("These songs can't play in the app right now — try “Open in YouTube”");playing=false;ui();return}toast("Skipping a song that can't play here");next(true)}
+  async function playList(list,start){
+    queue=list.slice();idx=start||0;if(MUS.playing)MUS.stop(1);
+    if(!(await ensure()))return;load();
+  }
+  function load(){const s=queue[idx];if(!s||!player)return;player.loadVideoById(s.id);ui()}
+  function next(auto){if(!queue.length)return;idx=M().shuffle?Math.floor(Math.random()*queue.length):(idx+1)%queue.length;load()}
+  function prev(){if(!queue.length)return;idx=(idx-1+queue.length)%queue.length;load()}
+  function toggle(){if(!player)return;if(playing)player.pauseVideo();else player.playVideo()}
+  function close(){try{player&&player.stopVideo()}catch(e){}playing=false;hideDock();ui()}
+  function pause(){try{if(player&&playing)player.pauseVideo()}catch(e){}}
+  function showDock(){const d=$("#songDock");d.hidden=false;document.body.classList.add("dock-open")}
+  function hideDock(){$("#songDock").hidden=true;document.body.classList.remove("dock-open")}
+  function ui(){
+    const s=queue[idx];$("#sdTitle").textContent=s?s.t:"Worship";$("#sdArtist").textContent=s?s.a||"":"";
+    $("#sdToggle").textContent=playing?"⏸":"▶";$("#songDock").classList.toggle("playing",playing);
+    document.querySelectorAll("[data-song]").forEach(r=>r.classList.toggle("now",!!s&&r.dataset.song===s.id));
+    const fab=$("#musicFab");if(fab)fab.classList.toggle("playing",playing||MUS.playing);
+  }
+  return {playList,next,prev,toggle,close,pause,ui,get playing(){return playing}};
+})();
+function allSongs(){return SONGS.concat((S.mySongs||[]).map(x=>({...x,custom:true})))}
+function songRow(sg,i){
+  return canEmbed()?`<button class="song" data-song="${sg.id}" data-si="${i}"><span class="song-n">${i+1}</span><span class="song-t"><b>${esc(sg.t)}</b><small>${esc(sg.a||"Your song")}</small></span><span class="song-play">▶</span></button>`
+    :`<a class="song" data-song="${sg.id}" rel="noopener" data-ext="1" href="${ytWatch(sg.id)}"><span class="song-n">${i+1}</span><span class="song-t"><b>${esc(sg.t)}</b><small>${esc(sg.a||"Your song")}</small></span><span class="song-play">↗</span></a>`;
+}
+function songsHTML(){
+  const list=allSongs(),mine=(S.mySongs||[]).length;
+  return `${canEmbed()?`<div class="row" style="margin:4px 0 12px"><button class="btn gold" data-act="songsAll" style="flex:1">▶ Play all</button><button class="btn ${M().shuffle?"on":""}" data-act="songsShuffle" id="shufBtn" style="flex:1">🔀 Shuffle ${M().shuffle?"on":"off"}</button></div>`:`<div class="tiny" style="margin:4px 0 10px">Songs open in YouTube here. In the Daily Bread phone app they play right inside the app.</div>`}
+    <div class="songs">${list.map((sg,i)=>songRow(sg,i)).join("")}</div>
+    <div class="sub">Add your own song</div>
+    <form id="addSongForm" class="askrow"><input type="text" id="addSongIn" placeholder="Paste a YouTube link…" autocomplete="off"><button class="btn gold" type="submit">Add</button></form>
+    ${mine?`<div class="sub">Songs you added</div><div class="chips">${(S.mySongs||[]).map(x=>`<button class="chip" data-delsong="${x.id}">✕ ${esc(x.t.length>28?x.t.slice(0,28)+"…":x.t)}</button>`).join("")}</div>`:""}
+    <div class="tiny" style="margin-top:10px">Songs stream from the artists' official YouTube videos. If a song can't play here, it's skipped automatically.</div>`;
+}
+function ytId(u){u=String(u||"").trim();const m=u.match(/(?:v=|youtu\.be\/|shorts\/|embed\/|live\/)([\w-]{11})/);return m?m[1]:(/^[\w-]{11}$/.test(u)?u:null)}
+async function addSong(u){
+  const id=ytId(u);if(!id)return toast("That doesn't look like a YouTube link");
+  S.mySongs=S.mySongs||[];if(allSongs().some(x=>x.id===id))return toast("That song is already in your list");
+  let t="My song",a="";
+  try{const r=await fetch(`https://www.youtube.com/oembed?url=${encodeURIComponent(ytWatch(id))}&format=json`);if(r.ok){const d=await r.json();t=d.title||t;a=d.author_name||""}}catch(e){}
+  S.mySongs.push({id,t,a});save();toast("Song added 🎵");
+  const box=$("#songsBox");if(box)box.innerHTML=songsHTML();
+}
+
 /* ---------- Background worship music (live-generated worship pads) ---------- */
 const MSTYLES=[
  {id:"peace",name:"Peaceful Pad",ic:"🕊️",desc:"Warm, steady chords for reading & prayer",prog:[0,4,5,3],oct:0,cut:900,len:10,piano:false,shimmer:.5},
@@ -2747,6 +2870,7 @@ const MUS=(function(){
   }
   function vol(){return ((S.music||{}).vol??60)/100*.9}
   async function play(){
+    if(typeof SP!=="undefined"&&SP.playing)SP.pause();
     if(!ctx)setup();
     if(ctx.state==="suspended")await ctx.resume();
     if(audioEl){try{await audioEl.play()}catch(e){}}
@@ -2767,17 +2891,21 @@ const MUS=(function(){
       navigator.mediaSession.setActionHandler("play",()=>play());navigator.mediaSession.setActionHandler("pause",()=>stop());}catch(e){}
   }
   function ui(){
-    const fab=$("#musicFab");if(fab)fab.classList.toggle("playing",playing);
+    const fab=$("#musicFab");if(fab)fab.classList.toggle("playing",playing||(typeof SP!=="undefined"&&SP.playing));
     const b=$("#musicPlay");if(b){b.textContent=playing?"⏸ Pause":"▶ Play";b.classList.toggle("on",playing)}
     document.querySelectorAll("[data-msleep]").forEach(x=>x.classList.toggle("on",!!sleepT&&Number(x.dataset.msleep)===(S.music||{}).sleep));
   }
   return {play,stop,restart,setVol,sleep,ui,get playing(){return playing}};
 })();
-function M(){S.music=S.music||{style:"peace",key:"D",vol:60};return S.music}
+function M(){S.music=S.music||{style:"peace",key:"D",vol:60,tab:"songs"};return S.music}
 function musicSheet(){
   const m=M();
-  openSheet(`<div class="music-head"><div class="music-orb ${MUS.playing?"playing":""}"><span>🎵</span></div><div><div class="plan-title" style="font-size:24px">Worship music</div><div class="muted" style="font-size:13px">Soft background music while you read and pray</div></div></div>
-    <button class="btn gold" id="musicPlay" style="width:100%;padding:15px;font-size:16px;margin:14px 0">${MUS.playing?"⏸ Pause":"▶ Play"}</button>
+  const tab=m.tab||"songs";
+  openSheet(`<div class="music-head"><div class="music-orb ${MUS.playing||SP.playing?"playing":""}"><span>🎵</span></div><div><div class="plan-title" style="font-size:24px">Worship music</div><div class="muted" style="font-size:13px">Worship songs, or soft background pads</div></div></div>
+    <div class="seg" id="musicTabs" style="margin:14px 0 6px"><button data-mtab="songs" class="${tab==="songs"?"on":""}">🎤 Worship songs</button><button data-mtab="pads" class="${tab==="pads"?"on":""}">🕊️ Background pads</button></div>
+    <div id="songsBox" ${tab==="songs"?"":"hidden"}>${songsHTML()}</div>
+    <div id="padsBox" ${tab==="pads"?"":"hidden"}>
+    <button class="btn gold" id="musicPlay" style="width:100%;padding:15px;font-size:16px;margin:10px 0 14px">${MUS.playing?"⏸ Pause":"▶ Play"}</button>
     <div class="sub" style="margin-top:4px">Mood</div>
     <div class="bggrid">${MSTYLES.map(st=>`<button class="bgcard ${st.id===m.style?"on":""}" data-mstyle="${st.id}"><span class="bgi">${st.ic}</span><span><b>${st.name}</b><small>${st.desc}</small></span></button>`).join("")}</div>
     <div class="sub">Key</div>
@@ -2786,9 +2914,7 @@ function musicSheet(){
     <input type="range" id="musicVol" min="5" max="100" value="${m.vol??60}" class="vol">
     <div class="sub">Sleep timer</div>
     <div class="chips">${[[0,"Off"],[15,"15 min"],[30,"30 min"],[60,"1 hour"]].map(([v,l])=>`<button class="chip" data-msleep="${v}">${l}</button>`).join("")}</div>
-    <div class="sub">Prefer songs?</div>
-    <div class="chips">${[["Instrumental worship","instrumental worship music for prayer"],["Soaking worship","soaking worship music"],["Piano hymns","peaceful piano hymns"],["Worship playlist","worship songs playlist"]].map(([l,q])=>`<a class="chip" rel="noopener" data-ext="1" href="${yt(q)}">▶ ${l}</a>`).join("")}</div>
-    <div class="tiny" style="margin-top:12px">The pads are made live on your device, so they work offline and never repeat exactly. On iPhone, music pauses when you leave the app or lock the screen.</div>`);
+    <div class="tiny" style="margin-top:12px">The pads are made live on your device, so they work offline and never repeat exactly. On iPhone, music pauses when you leave the app or lock the screen.</div></div>`);
   MUS.ui();
 }
 
