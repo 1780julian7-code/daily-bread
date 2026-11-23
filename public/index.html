@@ -910,6 +910,8 @@ body.dock-open{padding-bottom:calc(290px + env(safe-area-inset-bottom))!importan
 body.dock-open #musicFab{bottom:calc(282px + env(safe-area-inset-bottom))!important}
 body.dock-open .toast{bottom:calc(290px + env(safe-area-inset-bottom))!important}
 body.dock-open.nav-top .hbar{bottom:calc(272px + env(safe-area-inset-bottom))}
+.spot{display:flex;align-items:center;gap:12px;margin-top:12px;padding:12px;border-radius:16px;text-decoration:none;color:#fff;background:linear-gradient(135deg,#1db954,#128a3e);box-shadow:0 10px 24px -10px rgba(29,185,84,.6)}
+.spot-ic{font-size:24px}.spot b{display:block;font-size:14.5px}.spot small{display:block;font-size:12px;opacity:.9}.spot .fy-go{color:#fff;margin-left:auto}
 </style>
 </head>
 <body>
@@ -2818,6 +2820,7 @@ function songsHTML(){
   return `${canEmbed()?`<div class="row" style="margin:4px 0 12px"><button class="btn gold" data-act="songsAll" style="flex:1">▶ Play all</button><button class="btn ${M().shuffle?"on":""}" data-act="songsShuffle" id="shufBtn" style="flex:1">🔀 Shuffle ${M().shuffle?"on":"off"}</button></div>`:`<div class="tiny" style="margin:4px 0 10px">Songs open in YouTube here. In the Daily Bread phone app they play right inside the app.</div>`}
     <div class="chips" style="margin-bottom:10px">${SONG_FILTERS.filter(([k])=>k!=="mine"||mine).map(([k,l])=>`<button class="chip ${f===k?"on":""}" data-sf="${k}">${l}${k==="all"?` · ${allSongs().length}`:""}</button>`).join("")}</div>
     <div class="songs">${list.length?list.map((sg,i)=>songRow(sg,i)).join(""):`<div class="muted">No songs here yet.</div>`}</div>
+    <a class="spot" rel="noopener" data-ext="1" href="https://open.spotify.com/playlist/0JXf0WLyIK9En7igqCPzY3"><span class="spot-ic">🚗</span><span><b>Daily Bread Worship on Spotify</b><small>For the car (Android Auto & CarPlay) or playing with your phone locked</small></span><span class="fy-go">›</span></a>
     <div class="sub">Add your own song</div>
     <form id="addSongForm" class="askrow"><input type="text" id="addSongIn" placeholder="Paste a YouTube link…" autocomplete="off"><button class="btn gold" type="submit">Add</button></form>
     ${mine?`<div class="sub">Songs you added</div><div class="chips">${(S.mySongs||[]).map(x=>`<button class="chip" data-delsong="${x.id}">✕ ${esc(x.t.length>28?x.t.slice(0,28)+"…":x.t)}</button>`).join("")}</div>`:""}
