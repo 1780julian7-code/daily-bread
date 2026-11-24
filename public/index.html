@@ -68,21 +68,31 @@ window.DB_STANDALONE = true;
   const user={id:async()=>"me",can:async()=>true,canEdit:async()=>true,isOwner:async()=>true};
   let tts=null;
   if("speechSynthesis" in window&&"SpeechSynthesisUtterance" in window){
-    let stateCb=()=>{};
+    const SY=window.speechSynthesis;try{SY.getVoices();SY.onvoiceschanged=()=>SY.getVoices()}catch(e){}
+    let stateCb=()=>{},lineCb=()=>{},queue=[],qi=0,rate=1,voiceName="",gen=0,resolveFn=null,rejectFn=null,keep=null;
+    const pickVoice=()=>{const vs=SY.getVoices();return vs.find(v=>v.name===voiceName)||vs.find(v=>/^en(-|_)(US|GB)/i.test(v.lang)&&/premium|enhanced|natural|neural|samantha|daniel|google us/i.test(v.name))||vs.find(v=>/^en(-|_)US/i.test(v.lang))||vs.find(v=>/^en/i.test(v.lang))||null};
+    function next(g){
+      if(g!==gen)return;
+      if(qi>=queue.length){stateCb({state:"idle",reason:"completed"});const r=resolveFn;resolveFn=rejectFn=null;if(r)r();return}
+      const ln=queue[qi],u=new SpeechSynthesisUtterance(ln.text);u.rate=rate;const v=pickVoice();if(v){u.voice=v;u.lang=v.lang}
+      const idx=qi;u.onstart=()=>{if(g===gen)lineCb({line:idx,id:ln.id})};
+      u.onend=()=>{if(g!==gen)return;qi++;next(g)};
+      u.onerror=()=>{if(g!==gen)return;qi++;setTimeout(()=>next(g),50)};
+      keep=u;SY.speak(u);
+    }
     tts={
       speak:(text,o={})=>new Promise((res,rej)=>{
-        const s=window.speechSynthesis;s.cancel();
-        const full=Array.isArray(text)?text.map(l=>l.text).join("\n\n"):String(text);
-        const u=new SpeechSynthesisUtterance(full);u.rate=o.rate||1;
-        const v=s.getVoices().find(v=>/en(-|_)(US|GB)/i.test(v.lang)&&/natural|premium|enhanced|samantha|daniel/i.test(v.name));if(v)u.voice=v;
-        u.onend=()=>{stateCb({state:"idle",reason:"completed"});res()};
-        u.onerror=()=>{stateCb({state:"idle",reason:"error"});rej({code:"error"})};
-        stateCb({state:"speaking"});s.speak(u);
+        if(rejectFn){const r=rejectFn;resolveFn=rejectFn=null;r({code:"viewer_stopped"})}
+        gen++;SY.cancel();
+        queue=(Array.isArray(text)?text:[String(text)]).map(l=>typeof l==="string"?{text:l}:{text:String(l.text||""),id:l.id}).filter(l=>l.text.trim());
+        qi=0;rate=o.rate||1;voiceName=o.voiceName||"";resolveFn=res;rejectFn=rej;stateCb({state:"speaking"});
+        const g=gen;setTimeout(()=>next(g),60);
       }),
-      stop:()=>window.speechSynthesis.cancel(),
-      pause:()=>window.speechSynthesis.pause(),
-      resume:()=>window.speechSynthesis.resume(),
-      onState:f=>{stateCb=f},onLine:()=>{},onPosition:()=>{},setRate:()=>{},add:()=>Promise.resolve()
+      stop:()=>{gen++;SY.cancel();const r=rejectFn;resolveFn=rejectFn=null;stateCb({state:"idle",reason:"viewer_stopped"});if(r)r({code:"viewer_stopped"})},
+      pause:()=>{SY.pause();stateCb({state:"paused"})},
+      resume:()=>{SY.resume();stateCb({state:"speaking"})},
+      setRate:r=>{rate=r},
+      onState:f=>{stateCb=f},onLine:f=>{lineCb=f},onPosition:()=>{},add:()=>Promise.resolve()
     };
   }
   let dictation=null;const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
@@ -914,6 +924,22 @@ body.dock-open.nav-top .hbar{bottom:calc(272px + env(safe-area-inset-bottom))}
 .spot-ic{font-size:24px}.spot b{display:block;font-size:14.5px}.spot small{display:block;font-size:12px;opacity:.9}.spot .fy-go{color:#fff;margin-left:auto}
 .spot.yt{background:linear-gradient(135deg,#ff3b3b,#c4162a);box-shadow:0 10px 24px -10px rgba(230,33,23,.6)}
 .sd-bar button[data-sd="bg"]{font-size:16px}
+
+/* =================== READ ALOUD =================== */
+#readBar{position:fixed;left:12px;right:84px;bottom:calc(20px + env(safe-area-inset-bottom));z-index:27;display:flex;align-items:center;gap:8px;padding:8px 8px 8px 12px;border-radius:18px;
+  background:var(--dock);border:1px solid var(--line);box-shadow:0 14px 34px -12px rgba(0,0,0,.7);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);max-width:460px;animation:rise .3s ease}
+body:not(.nav-top) #readBar{bottom:calc(96px + env(safe-area-inset-bottom))}
+body.dock-open #readBar{bottom:calc(282px + env(safe-area-inset-bottom))!important}
+.rb-ic{font-size:18px;animation:pulse 1.6s ease-in-out infinite}
+.rb-info{flex:1;min-width:0}.rb-info b{display:block;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.rb-info small{display:block;font-size:11.5px;color:var(--muted)}
+#readBar button{flex:none;width:36px;height:36px;border-radius:11px;background:var(--card2);color:var(--text);font-size:14px}
+#readBar #rbToggle{background:var(--grad);color:#fff}
+.scripture .v.reading{background:color-mix(in srgb,var(--gold) 26%,transparent);box-shadow:0 0 0 2px color-mix(in srgb,var(--gold) 45%,transparent);border-radius:6px;transition:background .3s}
+.vlist{display:flex;flex-direction:column;gap:6px;max-height:44vh;overflow:auto}
+.vrow{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:10px 12px;border-radius:14px;background:var(--card2);border:1px solid var(--line);color:var(--text)}
+.vrow span:first-child{flex:1;min-width:0}.vrow b{display:block;font-size:14.5px}.vrow small{display:block;font-size:12px;color:var(--muted)}
+.vrow.on{border-color:var(--rose);background:color-mix(in srgb,var(--rose) 14%,transparent)}
+.vplay2{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--grad);color:#fff;font-size:11px;padding-left:2px}
 </style>
 </head>
 <body>
@@ -1029,7 +1055,7 @@ body.dock-open.nav-top .hbar{bottom:calc(272px + env(safe-area-inset-bottom))}
       <div class="row" style="justify-content:space-between">
         <div class="label" style="margin:0"><span class="dot"></span><span id="trLabel">Berean Standard Bible</span></div>
         <div class="row">
-          <button class="btn sm tts-only" id="chSpeak" hidden>🔊</button>
+          <button class="btn sm tts-only" id="chSpeak" hidden>🔊 Listen</button>
           <a class="btn sm ghost" id="vidLink" rel="noopener" data-ext="1">▶ Video</a>
           <a class="btn sm ghost" id="bgLink" rel="noopener" data-ext="1">Read in NIV ↗</a>
         </div>
@@ -1159,6 +1185,7 @@ body.dock-open.nav-top .hbar{bottom:calc(272px + env(safe-area-inset-bottom))}
       <div class="row"><button class="btn gold" id="saveSettings">Save settings</button><button class="btn" id="restartPlan">Restart plan today</button></div>
       <div class="tiny" id="syncNote" style="margin-top:10px"></div>
       <button class="btn" data-act="music" style="margin-top:12px;width:100%">🎵 Background worship music</button>
+      <button class="btn tts-only" data-rb="voice" style="margin-top:8px;width:100%" hidden>🗣️ Reading voice & speed</button>
       <button class="btn" data-act="gestures" style="margin-top:8px;width:100%">👆 Fun gestures guide</button>
       <button class="btn" data-act="themes" style="margin-top:8px;width:100%">🎨 Theme, colors & background</button>
       <button class="btn" data-act="installGuide" style="margin-top:8px;width:100%">📲 Install on your phone</button>
@@ -1178,6 +1205,10 @@ body.dock-open.nav-top .hbar{bottom:calc(272px + env(safe-area-inset-bottom))}
 <div class="sheet" id="sheet"><div class="grab"></div><button class="sheet-x" id="sheetX" aria-label="Close">✕</button><div id="sheetBody"></div></div>
 <div class="toast" id="toast"></div>
 <div id="ptr" aria-hidden="true">↻</div>
+<div id="readBar" hidden>
+  <span class="rb-ic">🔊</span><div class="rb-info"><b id="rbTitle">Reading</b><small id="rbPos"></small></div>
+  <button data-rb="toggle" id="rbToggle" aria-label="Pause or resume">⏸</button><button data-rb="stop" aria-label="Stop">⏹</button><button data-rb="voice" aria-label="Voice and speed">⚙︎</button>
+</div>
 <div id="songDock" hidden>
   <div class="sd-video"><div id="ytPlayer"></div></div>
   <div class="sd-bar"><span class="sd-eq"><i></i><i></i><i></i></span><div class="sd-info"><b id="sdTitle">Worship</b><small id="sdArtist"></small></div>
@@ -2198,6 +2229,13 @@ document.addEventListener("click",e=>{
   if(t.dataset.mstyle){M().style=t.dataset.mstyle;save();document.querySelectorAll("[data-mstyle]").forEach(b=>b.classList.toggle("on",b===t));if(MUS.playing)MUS.restart();else MUS.play();return}
   if(t.dataset.mkey){M().key=t.dataset.mkey;save();document.querySelectorAll("[data-mkey]").forEach(b=>b.classList.toggle("on",b===t));MUS.restart();return}
   if(t.dataset.msleep!==undefined){const v=Number(t.dataset.msleep);M().sleep=v;save();MUS.sleep(v);toast(v?`Music will fade out in ${v>=60?"1 hour":v+" minutes"}`:"Sleep timer off");return}
+  if(t.dataset.rb){buzz(8);const a=t.dataset.rb;
+    if(a==="stop")return stopReading();
+    if(a==="voice")return voiceSheet();
+    if(a==="toggle"){if(RD.paused){tts.resume&&tts.resume();RD.paused=false}else{tts.pause&&tts.pause();RD.paused=true}return rbUI()}}
+  if(t.dataset.vw!==undefined){S.voiceW=t.dataset.vw;save();document.querySelectorAll(".vrow").forEach(b=>b.classList.toggle("on",b===t));if(!RD.on)previewVoice();else toast("New voice starts with the next reading");return}
+  if(t.dataset.vc){S.voiceC=t.dataset.vc;save();document.querySelectorAll(".vrow").forEach(b=>b.classList.toggle("on",b===t));if(!RD.on)previewVoice();else toast("New voice starts with the next reading");return}
+  if(t.dataset.rate){S.rate=Number(t.dataset.rate);save();document.querySelectorAll("[data-rate]").forEach(b=>b.classList.toggle("on",b===t));if(tts&&tts.setRate)try{tts.setRate(S.rate)}catch(e){}if(!RD.on)previewVoice();return}
   if(t.dataset.navpos){S.navPos=t.dataset.navpos;save();applyNav();buzz(10);toast(S.navPos==="top"?"Menu moved to the top":"Menu moved to the bottom");return}
   if(t.dataset.smart){$("#smartIn").value=t.dataset.smart;return smartRoute(t.dataset.smart)}
   if(t.dataset.mood)return pickMood(t.dataset.mood);
@@ -2276,18 +2314,18 @@ document.addEventListener("click",e=>{
   switch(t.id){
     case "votdExplain":{const[vt,vr]=votd();openSheet(`<div class="label"><span class="dot"></span>${esc(vr)}</div><div class="saved-v" style="margin-bottom:6px">“${esc(vt)}”</div><div id="vExplain"></div>`);return explainVerse(vr,vt,$("#vExplain"))}
     case "votdSave":{popEl(t);buzz(12);const[vt,vr]=votd();const i=S.savedVerses.findIndex(s=>s.ref===vr);if(i>=0)S.savedVerses.splice(i,1);else{S.savedVerses.unshift({ref:vr,text:vt,at:todayKey()});toast("Verse saved")}save();return renderToday()}
-    case "votdSpeak":{const[vt,vr]=votd();return speak(`${vr}. ${vt}`)}
+    case "votdSpeak":{const[vt,vr]=votd();return readAloud([`${vr}.`,vt],{title:"Verse of the day"})}
     case "planCheck":{const P=planInfo();S.done[P.day]=!S.done[P.day];if(S.done[P.day]){markActive();toast("Well done! 🙌");burstFrom(t);buzz(30)}else buzz(10);save();return renderToday()}
     case "catchUp":{e.preventDefault();const P=planInfo();const miss=[];for(let d=0;d<P.day;d++)if(!S.done[d])miss.push(d);
       openSheet(`<div class="label"><span class="dot"></span>Catch up</div>${miss.slice(-30).reverse().map(d=>`<div class="entry"><div class="d">Day ${d+1}</div><div class="chips" style="margin-top:6px">${P.slice(d).map(([bi,c])=>`<button class="chip ${S.readCh[readKey(bi,c)]?"done":""}" data-open="${bi}:${c}">${esc(BOOKS[bi][0])} ${c}</button>`).join("")}<button class="chip" data-markday="${d}">✓ Mark done</button></div></div>`).join("")}`);return}
     case "devoGen":case "devoRegen":return genDevo();
-    case "devoSpeak":{const d=S.devos[todayKey()];return speak([d.title,d.ref+". "+d.scripture,...(Array.isArray(d.body)?d.body:[d.body]),d.application,"Let's pray. "+d.prayer].join("\n\n"))}
+    case "devoSpeak":{const d=S.devos[todayKey()];return readAloud([d.title,d.ref+". "+d.scripture,...(Array.isArray(d.body)?d.body:[d.body]),d.application,"Let's pray. "+d.prayer],{title:"Today's devotional"})}
     case "devoJournal":{const d=S.devos[todayKey()];show("journal");const n=$("#noteIn");if(!n.value.includes(d.reflect)){n.value=(n.value?n.value+"\n\n":"")+d.reflect+"\n";S.notes[todayKey()]=n.value;save()}n.focus();return}
     case "prevCh":{let{bi,c}=cur;if(c>1)c--;else if(bi>0){bi--;c=BOOKS[bi][1]}curVerses=[];return openChapter(bi,c)}
     case "nextCh":{let{bi,c}=cur;if(c<BOOKS[bi][1])c++;else if(bi<65){bi++;c=1}curVerses=[];return openChapter(bi,c)}
     case "studyCh":return studyChapter();
     case "askToggle":{const c=$("#chatCard");c.hidden=!c.hidden;if(!c.hidden)$("#askIn").focus();return}
-    case "chSpeak":return speak(`${refName()}. `+curVerses.map(v=>v.t).join(" "));
+    case "chSpeak":return readChapter();
     case "saveSettings":{S.name=$("#setName").value.trim().slice(0,40);const np=$("#setPlan").value;if(np!==S.plan){S.plan=np;S.start=todayKey();S.done={}}S.trad=$("#setTrad").value;const nt=$("#setTrans").value;if(nt!==S.trans){S.trans=nt;curVerses=[]}save();toast("Settings saved");renderJournal();return}
     case "restartPlan":{S.plan=$("#setPlan").value;S.start=todayKey();S.done={};save();toast("Plan restarted — Day 1 today");return}
   }
@@ -2954,10 +2992,60 @@ function musicSheet(){
 }
 
 /* ---------- TTS ---------- */
-async function speak(text){
-  if(!tts)return;
-  try{await tts.speak(String(text).slice(0,2000),{voice:"rounded",rate:.95})}catch(e){if(e&&e.code!=="viewer_stopped")console.warn(e)}
+/* Read aloud: one verse or paragraph at a time so it always reaches the end */
+const CLAUDE_VOICES=[["rounded","Rounded","Warm and gentle"],["buttery","Buttery","Smooth and natural"],["airy","Airy","Light and soft"],["glassy","Glassy","Clear and bright"]];
+const RD={on:false,paused:false,lines:[],map:[],title:"",gen:0};
+function splitLong(t,max=380){t=String(t||"").trim();if(t.length<=max)return t?[t]:[];const out=[];let cur="";
+  for(const sn of t.split(/(?<=[.!?;:])\s+/)){if((cur+" "+sn).trim().length>max&&cur){out.push(cur.trim());cur=sn}else cur=(cur+" "+sn).trim()}
+  if(cur)out.push(cur);return out.flatMap(x=>x.length>max?x.match(new RegExp(`.{1,${max}}(\\s|$)`,"g")).map(y=>y.trim()):[x])}
+async function readAloud(parts,opts={}){
+  if(!tts)return toast("Read-aloud isn't available on this device");
+  stopReading(true);if(typeof SP!=="undefined"&&SP.playing)SP.pause();
+  const lines=[],map=[];parts.forEach((p,i)=>splitLong(p).forEach(ch=>{lines.push(ch);map.push(opts.ids?opts.ids[i]:null)}));
+  if(!lines.length)return;
+  const gen=++RD.gen;Object.assign(RD,{on:true,paused:false,lines,map,title:opts.title||"Reading"});rbUI(0);
+  const voice=S.voiceC||"rounded",rate=S.rate||1;
+  try{
+    await tts.speak(lines.map((text,i)=>({text,voice,id:String(i)})),{voice,rate,voiceName:S.voiceW||""});
+    if(gen===RD.gen){RD.on=false;rbUI();clearReadHL();if(opts.onDone)opts.onDone()}
+  }catch(e){if(gen===RD.gen){RD.on=false;rbUI();clearReadHL()}}
 }
+function stopReading(silent){RD.gen++;RD.on=false;RD.paused=false;try{tts&&tts.stop()}catch(e){}clearReadHL();rbUI()}
+function clearReadHL(){document.querySelectorAll(".v.reading").forEach(x=>x.classList.remove("reading"))}
+function onReadLine(i){
+  if(!RD.on)return;rbUI(i);const vid=RD.map[i];
+  if(vid!=null&&vid!==undefined){clearReadHL();const el=document.querySelector(`.v[data-v="${vid}"]`);if(el){el.classList.add("reading");if(!focusOn||true)el.scrollIntoView({behavior:"smooth",block:"center"})}}
+}
+function rbUI(i){
+  const b=$("#readBar");if(!b)return;b.hidden=!RD.on;document.body.classList.toggle("reading-on",RD.on);
+  if(!RD.on)return;$("#rbTitle").textContent=RD.title;$("#rbToggle").textContent=RD.paused?"▶":"⏸";
+  if(i!==undefined){const vid=RD.map[i];$("#rbPos").textContent=vid!=null?`Verse ${vid}`:`Part ${i+1} of ${RD.lines.length}`}
+}
+function readChapter(){
+  if(!curVerses.length)return;
+  readAloud([`${refName()}.`].concat(curVerses.map(v=>v.t)),{title:`Reading ${refName()}`,ids:[null].concat(curVerses.map(v=>v.n)),
+    onDone:()=>{markRead();toast(`Finished ${refName()} ✓`)}});
+}
+function voiceSheet(){
+  const rate=S.rate||1,std=!!window.DB_STANDALONE;
+  let list="";
+  if(std&&window.speechSynthesis){
+    const vs=speechSynthesis.getVoices().filter(v=>/^en/i.test(v.lang));
+    const rank=v=>(/premium|enhanced|natural|neural/i.test(v.name)?0:/siri|samantha|daniel|karen|moira|google/i.test(v.name)?1:2);
+    vs.sort((a,b)=>rank(a)-rank(b)||a.name.localeCompare(b.name));
+    list=vs.length?vs.slice(0,30).map(v=>`<button class="vrow ${S.voiceW===v.name?"on":""}" data-vw="${esc(v.name)}"><span><b>${esc(v.name.replace(/\s*\(.*\)$/,""))}</b><small>${esc(v.lang)}${rank(v)===0?" · high quality":""}</small></span><span class="vplay2">▶</span></button>`).join("")
+      :`<div class="muted">Loading voices… close and reopen this window.</div>`;
+  }else{
+    list=CLAUDE_VOICES.map(([k,n,d])=>`<button class="vrow ${(S.voiceC||"rounded")===k?"on":""}" data-vc="${k}"><span><b>${n}</b><small>${d}</small></span><span class="vplay2">▶</span></button>`).join("");
+  }
+  openSheet(`<div style="font-size:38px">🗣️</div><div class="plan-title" style="font-size:24px;margin:4px 0">Reading voice</div>
+    <p class="muted" style="font-size:13.5px;margin-bottom:10px">Tap a voice to hear it and choose it.</p>
+    <div class="vlist">${list}</div>
+    <div class="sub">Speed</div>
+    <div class="chips">${[[.8,"Slow"],[.9,"Relaxed"],[1,"Normal"],[1.15,"Brisk"],[1.3,"Fast"]].map(([r,l])=>`<button class="chip ${Math.abs(rate-r)<.01?"on":""}" data-rate="${r}">${l}</button>`).join("")}</div>
+    ${std&&/iPhone|iPad/.test(navigator.userAgent)?`<div class="tiny" style="margin-top:12px;line-height:1.5">Want more natural voices? On iPhone go to <b>Settings → Accessibility → Spoken Content → Voices → English</b> and download an <b>Enhanced</b> or <b>Premium</b> voice. It will show up here.</div>`:""}`);
+}
+function previewVoice(){if(!tts)return;try{tts.stop()}catch(e){}tts.speak([{text:"The Lord is my shepherd; I shall not want.",voice:S.voiceC||"rounded"}],{voice:S.voiceC||"rounded",rate:S.rate||1,voiceName:S.voiceW||""}).catch(()=>{})}
 
 /* ---------- Living background ---------- */
 let starCol="rgba(247,222,164,A)";
@@ -3054,7 +3142,7 @@ show(location.hash.slice(1)||"today",false);
   const cl=window.claude;
   if(!cl||!cl.use){$("#syncNote").textContent="Saved on this device only.";return ensureVotd()}
   sampleReady=cl.use("sample");sampleReady.then(s=>{sample=s}).catch(()=>{});
-  cl.use("tts").then(t=>{if(t){tts=t;document.querySelectorAll(".tts-only").forEach(b=>b.hidden=false)}}).catch(()=>{});
+  cl.use("tts").then(t=>{if(t){tts=t;document.querySelectorAll(".tts-only").forEach(b=>b.hidden=false);try{t.onLine&&t.onLine(({line,id})=>onReadLine(id!=null?Number(id):line))}catch(e){}try{t.onState&&t.onState(({state})=>{if(state==="paused"){RD.paused=true;rbUI()}else if(state==="speaking"){RD.paused=false;rbUI()}})}catch(e){}}}).catch(()=>{});
   try{
     const [d,u]=await Promise.all([cl.use("db"),cl.use("user")]);
     const id=u?await u.id():null;
