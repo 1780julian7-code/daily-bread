@@ -1191,6 +1191,32 @@ body.modern .btn.gold{background-size:180% 100%!important;animation:btnSh 6s eas
 body.modern .btn,body.modern .fy,body.modern .mchip{transition:transform .25s cubic-bezier(.34,1.56,.64,1)}
 body.modern .btn:active,body.modern .fy:active,body.modern .mchip:active{transform:scale(.96);transition:transform .08s}
 @media (prefers-reduced-motion:reduce){#bgPic,#bgFx *,.stag,.vw,.tiles .ti,.btn.gold{animation:none!important}}
+
+/* =================== MORE TOOLS =================== */
+.tools{grid-template-columns:repeat(3,1fr)!important;gap:8px!important}
+.tools button{padding:12px 10px!important;border-radius:14px!important}
+.tools .tl-ic{font-size:24px!important;margin-bottom:2px!important}
+.tools b{font-size:13px!important;line-height:1.2}
+.tools small{font-size:11px!important}
+.pr-cat{flex:none;font-size:11px;font-weight:700;padding:3px 8px;border-radius:99px;background:color-mix(in srgb,var(--accent2,var(--gold)) 14%,transparent);color:var(--accent2,var(--gold))}
+.chip.on,[data-prcat].on{background:var(--accent,var(--gold))!important;color:#fff!important}
+.sm-item{display:block;width:100%;text-align:left;font:inherit;color:var(--text);cursor:pointer}
+.vp-canvas{width:100%;height:auto;border-radius:16px;display:block;box-shadow:0 12px 30px -12px rgba(0,0,0,.45)}
+.qz-q{font-size:19px;font-weight:700;line-height:1.35;margin:6px 0 12px;letter-spacing:-.01em}
+.qz-o{display:block;width:100%;text-align:left;padding:13px 14px;margin-bottom:8px;border-radius:14px;border:1.5px solid var(--line);background:var(--card2);color:var(--text);font:inherit;font-size:15px;cursor:pointer;transition:transform .15s,background .2s}
+.qz-o:active{transform:scale(.98)}.qz-o.ok{background:#22c55e;border-color:#22c55e;color:#fff;animation:hop .4s}.qz-o.no{background:#ef4444;border-color:#ef4444;color:#fff;animation:shake .4s}
+.bi-facts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}.bi-facts div{background:var(--card2);border-radius:12px;padding:10px}.bi-facts small{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}.bi-facts b{font-size:13px;line-height:1.3}
+.btl{position:relative;margin-top:12px;padding-left:6px}
+.btl::before{content:"";position:absolute;left:27px;top:10px;bottom:10px;width:3px;border-radius:3px;background:linear-gradient(var(--accent,var(--gold)),var(--accent2,var(--gold)))}
+.btl-i{display:flex;gap:12px;width:100%;text-align:left;background:none;border:0;padding:8px 0;color:var(--text);font:inherit;cursor:pointer;position:relative}
+.btl-ic{flex:none;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-size:20px;background:var(--card);box-shadow:0 0 0 3px var(--accent,var(--gold));z-index:1}
+.btl-t{display:flex;flex-direction:column;gap:2px;padding:10px 12px;border-radius:14px;background:var(--card2);flex:1}
+.btl-t small{font-size:11.5px;font-weight:700;color:var(--accent2,var(--gold));letter-spacing:.03em}.btl-t b{font-size:15.5px}.btl-t span{font-size:13.5px;color:var(--text2,var(--text));line-height:1.4}.btl-t em{font-style:normal;font-size:12.5px;color:var(--accent,var(--gold));font-weight:600;margin-top:2px}
+#sheet.on .btl-i{animation:stagIn .45s cubic-bezier(.2,.8,.2,1) both}
+.qt-ring{position:relative;width:210px;height:210px;margin:14px auto}
+.qt-ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.qt-bg{fill:none;stroke:var(--line);stroke-width:8}.qt-fg{fill:none;stroke:var(--accent,var(--gold));stroke-width:8;stroke-linecap:round;stroke-dasharray:327;stroke-dashoffset:0;transition:stroke-dashoffset .5s linear}
+.qt-time{position:absolute;inset:0;display:grid;place-items:center;font-size:42px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
 </style>
 </head>
 <body>
@@ -1333,6 +1359,14 @@ body.modern .btn:active,body.modern .fy:active,body.modern .mchip:active{transfo
         <button data-act="memory"><span class="tl-ic">🧠</span><b>Memory verses</b><small id="memSub">Learn verses by heart</small></button>
         <button data-act="dict"><span class="tl-ic">📚</span><b>Bible dictionary</b><small>Words, names &amp; places</small></button>
         <button data-act="progress"><span class="tl-ic">📊</span><b>My progress</b><small>Chapters read in every book</small></button>
+        <button data-act="quiz"><span class="tl-ic">🎯</span><b>Chapter quiz</b><small>Test what you just read</small></button>
+        <button data-act="bookIntro"><span class="tl-ic">📜</span><b>Book intro</b><small>Author, themes &amp; outline</small></button>
+        <button data-act="finder"><span class="tl-ic">🔎</span><b>Verse finder</b><small>Verses for any need</small></button>
+        <button data-act="timeline"><span class="tl-ic">🕰</span><b>Bible timeline</b><small>The big story in 14 eras</small></button>
+        <button data-act="prayers"><span class="tl-ic">🙏</span><b>Prayer list</b><small>Track requests &amp; answers</small></button>
+        <button data-act="sermons"><span class="tl-ic">⛪</span><b>Church notes</b><small>Sermon notes in one place</small></button>
+        <button data-act="versePic"><span class="tl-ic">🖼</span><b>Verse picture</b><small>Make a shareable image</small></button>
+        <button data-act="quiet"><span class="tl-ic">⏳</span><b>Quiet time</b><small>Timer for prayer &amp; reading</small></button>
       </div>
     </div>
     <div class="panel" id="chStudy"></div>
@@ -1429,6 +1463,7 @@ body.modern .btn:active,body.modern .fy:active,body.modern .mchip:active{transfo
       <textarea id="noteIn" rows="5" placeholder="What is God showing you today? Prayers, insights, gratitude…"></textarea>
       <div class="tiny" id="noteStatus" style="margin-top:6px">Saves automatically.</div>
     </div>
+    <div class="card"><div class="label"><span class="dot"></span>My lists</div><div class="row"><button class="btn" data-act="prayers">🙏 Prayer list</button><button class="btn" data-act="sermons">⛪ Church notes</button><button class="btn" data-act="memory">🧠 Memory verses</button></div></div>
     <div class="card"><div class="label"><span class="dot"></span>🖍 Highlights & notes</div><div class="chips" id="hlFilter" style="margin-bottom:10px"></div><div id="hlList"></div></div>
     <div class="card"><div class="label"><span class="dot"></span>Saved verses</div><div id="savedVerses"></div></div>
     <div class="card"><div class="label"><span class="dot"></span>Saved topics</div><div id="savedTopics"></div></div>
@@ -1770,7 +1805,7 @@ function verseSheet(n){
    <div class="hl-row"><span class="hl-lbl">Highlight</span>${HLC.map(([k,name])=>`<button class="hl-dot hd-${k} ${h.c===k?"on":""}" data-hl="${k}" aria-label="${name}"></button>`).join("")}<button class="hl-dot hd-none" data-hl="" aria-label="Remove highlight">✕</button></div>
    <div class="vnote-box"><textarea id="vNote" rows="2" placeholder="📝 Add a note about this verse…">${esc(h.n||"")}</textarea><div class="tiny" id="vNoteStatus">${h.n?"Saved ✓":"Notes save automatically."}</div></div>
    <div class="row"><button class="btn gold sm" data-act="explainV">✦ Explain this verse</button><button class="btn sm" data-act="saveV">${isSaved?"★ Saved":"☆ Save"}</button><button class="btn sm" data-act="copyV">⧉ Copy</button></div>
-   <div class="row" style="margin-top:8px"><button class="btn sm" data-act="compareV">⇄ Compare translations</button><button class="btn sm" data-act="memV">${(S.memory||[]).some(m=>m.ref===ref)?"🧠 Memorizing":"🧠 Memorize"}</button><a class="btn sm ghost" rel="noopener" data-ext="1" href="https://www.biblegateway.com/passage/?search=${encodeURIComponent(ref)}&version=NIV">NIV ↗</a></div><div id="vExplain" style="margin-top:12px"></div>`);
+   <div class="row" style="margin-top:8px"><button class="btn sm" data-act="compareV">⇄ Compare translations</button><button class="btn sm" data-act="picV">🖼 Picture</button><button class="btn sm" data-act="memV">${(S.memory||[]).some(m=>m.ref===ref)?"🧠 Memorizing":"🧠 Memorize"}</button><a class="btn sm ghost" rel="noopener" data-ext="1" href="https://www.biblegateway.com/passage/?search=${encodeURIComponent(ref)}&version=NIV">NIV ↗</a></div><div id="vExplain" style="margin-top:12px"></div>`);
 }
 async function explainVerse(ref,text,target){
   target.innerHTML=loadingHTML("Opening up this verse…");
@@ -2573,6 +2608,33 @@ document.addEventListener("click",e=>{
   if(t.dataset.savedTopic!==undefined){const st=S.savedTopics[Number(t.dataset.savedTopic)];show("study");const box=$("#topicResult");box.innerHTML=topicHTML(st.data,true);box.dataset.json=JSON.stringify(st.data);return}
   const act=t.dataset.act;
   if(act==="compareV")return compareVerse(selV,$("#vExplain"));
+  if(act==="picV"){const v=curVerses.find(x=>x.n===selV);return versePicSheet(`${refName()}:${selV}`,v.t)}
+  if(act==="versePic")return versePicSheet();
+  if(t.dataset.vp){vpStyle=t.dataset.vp;document.querySelectorAll("[data-vp]").forEach(b=>b.classList.toggle("on",b===t));return drawVersePic()}
+  if(act==="vpShare")return shareVersePic();
+  if(act==="vpVotd"){const v=S.votd||{};if(v.text){vpData={ref:v.ref,text:v.text}}return versePicSheet()}
+  if(act==="prayers")return prayerSheet();
+  if(t.dataset.prtab){prTab=t.dataset.prtab;return prayerSheet()}
+  if(t.dataset.prcat){prCat=prCat===t.dataset.prcat?"":t.dataset.prcat;document.querySelectorAll("[data-prcat]").forEach(b=>b.classList.toggle("on",b.dataset.prcat===prCat));return}
+  if(t.dataset.prPray){const p=(S.prayers||[]).find(x=>x.id===t.dataset.prPray);if(p){p.pc=(p.pc||0)+1;S.amens=(S.amens||0)+1;markActive();save();burstFrom(t);buzz([20,30]);toast("Amen 🙏")}return setTimeout(prayerSheet,350)}
+  if(t.dataset.prAns){const p=(S.prayers||[]).find(x=>x.id===t.dataset.prAns);if(p){p.ans=todayKey();save();confetti();toast("Praise God! 🙌")}return prayerSheet()}
+  if(t.dataset.prDel){S.prayers=(S.prayers||[]).filter(x=>x.id!==t.dataset.prDel);save();return prayerSheet()}
+  if(act==="sermons")return sermonSheet();
+  if(t.dataset.sermonEdit!==undefined)return sermonEdit(t.dataset.sermonEdit);
+  if(act==="sermonSave")return sermonSave(t.dataset.id);
+  if(t.dataset.sermonDel){S.sermons=(S.sermons||[]).filter(x=>x.id!==t.dataset.sermonDel);save();toast("Deleted");return sermonSheet()}
+  if(act==="quiz")return chapterQuiz();
+  if(t.dataset.qz!==undefined&&QZ&&QZ.picked==null){QZ.picked=Number(t.dataset.qz);const ok=QZ.picked===QZ.qs[QZ.i].answer;if(ok){QZ.score++;burstFrom(t)}buzz(ok?20:[10,40,10]);return qzDraw()}
+  if(act==="qzNext"){QZ.i++;QZ.picked=null;return qzDraw()}
+  if(act==="closeSheet")return closeSheet();
+  if(act==="bookIntro")return bookIntro();
+  if(act==="timeline")return timelineSheet();
+  if(act==="finder")return finderSheet();
+  if(t.dataset.vf){$("#vfIn").value=t.dataset.vf;return findVerses(t.dataset.vf)}
+  if(t.dataset.memAdd){const[r,x]=t.dataset.memAdd.split("|");addMemory(r,x);t.textContent="🧠 Memorizing";return}
+  if(act==="quiet")return quietSheet();
+  if(t.dataset.qt)return qtStart(Number(t.dataset.qt));
+  if(act==="qtStop"){clearInterval(QT.iv);QT.end=0;return quietSheet()}
   if(act==="memV"){const v=curVerses.find(x=>x.n===selV);addMemory(`${refName()}:${selV}`,v.t);t.textContent="🧠 Memorizing";return}
   if(act==="soap")return soapSheet();
   if(act==="soapSave")return soapSave();
@@ -2620,7 +2682,7 @@ $("#hForm").addEventListener("submit",e=>{e.preventDefault();const q=$("#hIn").v
 $("#hIn").addEventListener("input",e=>{e.target.style.height="auto";e.target.style.height=Math.min(130,e.target.scrollHeight)+"px"});
 $("#hIn").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey&&matchMedia("(pointer:fine)").matches){e.preventDefault();$("#hForm").requestSubmit()}});
 document.addEventListener("change",e=>{if(e.target.id==="picFile"){setPhoto(e.target.files&&e.target.files[0]);e.target.value="";return}if(e.target.id==="vidBook"){const b=BOOKS[Number(e.target.value)][0],a=$("#vidBookGo");a.href=yt(`BibleProject ${b} overview`);a.textContent=`▶ Watch ${b} overview`}});
-document.addEventListener("submit",e=>{if(e.target.id==="dictForm"){e.preventDefault();$("#dictIn").blur();return lookupWord($("#dictIn").value)}if(e.target.id==="addSongForm"){e.preventDefault();const i=$("#addSongIn");addSong(i.value);i.value="";return}if(e.target.id==="smartForm"){e.preventDefault();const i=$("#smartIn");smartRoute(i.value);i.blur();return}if(e.target.id==="vidForm"){e.preventDefault();return findVideos($("#vidIn").value)}if(e.target.id==="customPlanForm"){e.preventDefault();const t=$("#cpTopic").value.trim();if(!t)return $("#cpTopic").focus();buildPlan(t,Number($("#cpDays").value),"","",true)}});
+document.addEventListener("submit",e=>{if(e.target.id==="prForm"){e.preventDefault();return addPrayer($("#prIn").value)}if(e.target.id==="vfForm"){e.preventDefault();$("#vfIn").blur();return findVerses($("#vfIn").value)}if(e.target.id==="dictForm"){e.preventDefault();$("#dictIn").blur();return lookupWord($("#dictIn").value)}if(e.target.id==="addSongForm"){e.preventDefault();const i=$("#addSongIn");addSong(i.value);i.value="";return}if(e.target.id==="smartForm"){e.preventDefault();const i=$("#smartIn");smartRoute(i.value);i.blur();return}if(e.target.id==="vidForm"){e.preventDefault();return findVideos($("#vidIn").value)}if(e.target.id==="customPlanForm"){e.preventDefault();const t=$("#cpTopic").value.trim();if(!t)return $("#cpTopic").focus();buildPlan(t,Number($("#cpDays").value),"","",true)}});
 $("#placeForm").addEventListener("submit",e=>{e.preventDefault();explainPlace($("#placeIn").value)});
 $("#personForm").addEventListener("submit",e=>{e.preventDefault();explainPerson($("#personIn").value)});
 $("#topicForm").addEventListener("submit",e=>{e.preventDefault();explainTopic($("#topicIn").value)});
@@ -2751,6 +2813,157 @@ function animVotd(){const el=$("#votdText");if(RM||votdAnimated||!el||!el.textCo
   const words=el.textContent.split(/(\s+)/);el.innerHTML=words.map((w,i)=>/^\s+$/.test(w)?w:`<span class="vw" style="animation-delay:${(i*0.022+.15).toFixed(3)}s">${esc(w)}</span>`).join("");
   setTimeout(()=>{if(el.querySelector(".vw"))el.textContent=words.join("")},4000)}
 function todayMotion(){animStats();animVotd()}
+
+/* ---------- More tools: prayer list, church notes, verse picture, quiz, book intro, timeline, verse finder, quiet timer ---------- */
+const uid8=()=>Math.random().toString(36).slice(2,10);
+const PR_CATS=["Family","Friends","Health","Work","Church","Me"];
+let prTab="active";
+function prayerSheet(){
+  const all=S.prayers||[],act=all.filter(p=>!p.ans),ans=all.filter(p=>p.ans),list=prTab==="active"?act:ans;
+  openSheet(`<div style="font-size:36px">🙏</div><div class="plan-title" style="font-size:25px;margin:4px 0">Prayer list</div>
+   <form id="prForm" class="row" style="flex-wrap:nowrap;margin:8px 0 6px"><input type="text" id="prIn" placeholder="Who or what are you praying for?" style="flex:1"><button class="btn gold sm" type="submit">Add</button></form>
+   <div class="chips" id="prCats">${PR_CATS.map(c=>`<button class="chip" data-prcat="${c}">${c}</button>`).join("")}</div>
+   <div class="seg" style="margin:12px 0 10px"><button data-prtab="active" class="${prTab==="active"?"on":""}">Praying (${act.length})</button><button data-prtab="ans" class="${prTab==="ans"?"on":""}">Answered (${ans.length})</button></div>
+   ${list.length?list.map(p=>`<div class="kv pr-item"><div class="row" style="justify-content:space-between;align-items:flex-start;flex-wrap:nowrap"><b style="font-size:15px;color:var(--text)">${esc(p.t)}</b>${p.cat?`<span class="pr-cat">${esc(p.cat)}</span>`:""}</div>
+     <div class="tiny" style="margin:4px 0 8px">${p.ans?`✓ Answered ${esc(p.ans)}`:`Added ${esc((p.at||"").slice(0,10))}${p.pc?` · prayed ${p.pc}×`:""}`}</div>
+     <div class="row">${p.ans?"":`<button class="btn sm gold" data-pr-pray="${p.id}">🙏 Prayed</button><button class="btn sm" data-pr-ans="${p.id}">✓ Answered</button>`}<button class="btn sm ghost" data-pr-del="${p.id}">Remove</button></div></div>`).join("")
+   :`<div class="reflect">${prTab==="active"?"Add the people and needs on your heart. Tap 🙏 each time you pray for them.":"When God answers a prayer, mark it here so you can remember His faithfulness."}</div>`}`);
+}
+let prCat="";
+function addPrayer(t){t=String(t||"").trim();if(!t)return;S.prayers=S.prayers||[];S.prayers.unshift({id:uid8(),t,cat:prCat,at:new Date().toISOString(),pc:0,ans:null});prCat="";save();prTab="active";prayerSheet()}
+function sermonSheet(){
+  const all=(S.sermons||[]).slice().sort((a,b)=>(b.date||"").localeCompare(a.date||""));
+  openSheet(`<div style="font-size:36px">⛪</div><div class="plan-title" style="font-size:25px;margin:4px 0">Church notes</div>
+   <p class="muted" style="font-size:14px;line-height:1.5">Take notes during the sermon and keep them all in one place.</p>
+   <button class="btn gold" data-sermon-edit="" style="width:100%;margin:6px 0 12px">＋ New sermon notes</button>
+   ${all.length?all.map(x=>`<button class="kv sm-item" data-sermon-edit="${x.id}"><b style="color:var(--text);font-size:15px">${esc(x.title||"Untitled message")}</b><div class="tiny">${esc(x.date||"")}${x.speaker?" · "+esc(x.speaker):""}${x.passage?" · "+esc(x.passage):""}</div>${x.points?`<div class="nt" style="margin-top:4px">${esc(x.points.slice(0,110))}${x.points.length>110?"…":""}</div>`:""}</button>`).join("")
+   :`<div class="reflect">No notes yet. Tap <b>New sermon notes</b> on Sunday.</div>`}`);
+}
+function sermonEdit(id){
+  const x=(S.sermons||[]).find(s=>s.id===id)||{id:"",date:todayKey()};
+  const f=(k,l,ph,rows)=>`<div class="soap-f"><div class="soap-l">${l}</div>${rows?`<textarea id="sm_${k}" rows="${rows}" placeholder="${ph}">${esc(x[k]||"")}</textarea>`:`<input type="text" id="sm_${k}" placeholder="${ph}" value="${esc(x[k]||"")}" style="width:100%;box-sizing:border-box">`}</div>`;
+  openSheet(`<div class="plan-title" style="font-size:24px;margin:2px 0 4px">${x.id?"Edit notes":"New sermon notes"}</div>
+   ${f("title","Message title","e.g. Faith in the storm")}${f("speaker","Speaker","Pastor's name")}${f("passage","Scripture","e.g. Mark 4:35–41")}${f("date","Date","YYYY-MM-DD")}
+   ${f("points","Key points","What stood out? Main points, quotes…",5)}${f("apply","My next step","How will I live this out this week?",3)}${f("prayer","Prayer","",2)}
+   <div class="row"><button class="btn gold" data-act="sermonSave" data-id="${x.id}" style="flex:1">Save notes</button>${x.id?`<button class="btn ghost" data-sermon-del="${x.id}">Delete</button>`:""}</div>
+   <button class="btn sm ghost" data-act="sermons" style="margin-top:8px">← All church notes</button>`);
+}
+function sermonSave(id){const g=k=>($("#sm_"+k).value||"").trim();S.sermons=S.sermons||[];let x=S.sermons.find(s=>s.id===id);if(!x){x={id:uid8()};S.sermons.push(x)}
+  ["title","speaker","passage","date","points","apply","prayer"].forEach(k=>x[k]=g(k));x.at=new Date().toISOString();markActive();save();toast("Church notes saved ⛪");sermonSheet()}
+/* verse picture */
+const VP_STYLES=[["sunset","🌅 Sunset"],["night","🌌 Night"],["crimson","❤️ Crimson"],["ocean","🌊 Ocean"],["photo","📷 My photo"]];
+let vpData={ref:"",text:""},vpStyle="sunset";
+function versePicSheet(ref,text){
+  if(ref)vpData={ref,text};else if(!vpData.text){const v=S.votd||{};vpData={ref:v.ref||"Psalm 46:10",text:v.text||"Be still, and know that I am God."}}
+  openSheet(`<div class="plan-title" style="font-size:24px;margin:2px 0 8px">🖼 Verse picture</div>
+   <canvas id="vpCanvas" width="1080" height="1350" class="vp-canvas"></canvas>
+   <div class="chips" style="margin:10px 0">${VP_STYLES.filter(s=>s[0]!=="photo"||myPhoto()).map(([k,l])=>`<button class="chip ${k===vpStyle?"on":""}" data-vp="${k}">${l}</button>`).join("")}</div>
+   <div class="row"><button class="btn gold" data-act="vpShare" style="flex:1">⇪ Share / Save</button><button class="btn" data-act="vpVotd">Use verse of the day</button></div>
+   <div class="tiny" style="margin-top:8px">${esc(vpData.ref)} · Tip: tap any verse while reading and choose 🖼 Picture.</div>`);
+  drawVersePic();
+}
+function wrapLines(ctx,text,maxW){const words=text.split(/\s+/),lines=[];let l="";for(const w of words){const t=l?l+" "+w:w;if(ctx.measureText(t).width>maxW&&l){lines.push(l);l=w}else l=t}if(l)lines.push(l);return lines}
+function drawVersePic(){
+  const c=$("#vpCanvas");if(!c)return;const x=c.getContext("2d"),W=1080,H=1350;
+  const paint=()=>{
+    const grad=(stops)=>{const g=x.createLinearGradient(0,0,0,H);stops.forEach(([o,col])=>g.addColorStop(o,col));x.fillStyle=g;x.fillRect(0,0,W,H)};
+    const stars=n=>{for(let i=0;i<n;i++){x.fillStyle=`rgba(255,255,255,${Math.random()*.7+.2})`;x.beginPath();x.arc(Math.random()*W,Math.random()*H*.55,Math.random()*2.4+.6,0,7);x.fill()}};
+    if(vpStyle==="sunset"){grad([[0,"#050c2e"],[.4,"#16307a"],[.62,"#5a2a7a"],[.78,"#c42a3a"],[.9,"#ff8a4a"]]);stars(70);
+      const sg=x.createRadialGradient(700,1130,10,700,1130,420);sg.addColorStop(0,"rgba(255,240,215,1)");sg.addColorStop(.12,"rgba(255,180,120,.9)");sg.addColorStop(1,"rgba(255,80,60,0)");x.fillStyle=sg;x.fillRect(0,0,W,H);
+      x.fillStyle="#2b1a58";x.beginPath();x.moveTo(0,1180);x.lineTo(180,1110);x.lineTo(380,1170);x.lineTo(600,1090);x.lineTo(820,1150);x.lineTo(1080,1100);x.lineTo(1080,H);x.lineTo(0,H);x.fill();
+      x.fillStyle="#0b1336";x.beginPath();x.moveTo(0,1260);x.quadraticCurveTo(260,1150,520,1230);x.quadraticCurveTo(800,1300,1080,1220);x.lineTo(1080,H);x.lineTo(0,H);x.fill();x.fillRect(268,1050,22,160);x.fillRect(222,1094,114,20)}
+    else if(vpStyle==="night"){grad([[0,"#030820"],[.6,"#0f2463"],[1,"#7a1d3d"]]);stars(220);x.fillStyle="#f1f5ff";x.beginPath();x.arc(860,230,64,0,7);x.fill()}
+    else if(vpStyle==="crimson"){grad([[0,"#3a0a14"],[.5,"#a3132c"],[1,"#ef4444"]]);const g=x.createRadialGradient(W/2,H*.2,0,W/2,H*.2,900);g.addColorStop(0,"rgba(255,255,255,.18)");g.addColorStop(1,"rgba(255,255,255,0)");x.fillStyle=g;x.fillRect(0,0,W,H)}
+    else if(vpStyle==="ocean"){grad([[0,"#0b2a6b"],[.55,"#1d4ed8"],[1,"#60a5fa"]]);x.strokeStyle="rgba(255,255,255,.12)";x.lineWidth=3;for(let i=0;i<9;i++){x.beginPath();const y=H*.62+i*60;x.moveTo(0,y);for(let k=0;k<=W;k+=60)x.quadraticCurveTo(k+30,y+(i%2?14:-14),k+60,y);x.stroke()}}
+    // readability scrim
+    const sc=x.createLinearGradient(0,0,0,H);sc.addColorStop(0,"rgba(0,0,0,.15)");sc.addColorStop(.5,"rgba(0,0,0,.28)");sc.addColorStop(1,"rgba(0,0,0,.15)");x.fillStyle=sc;x.fillRect(0,0,W,H);
+    // text
+    let size=78,lines;x.textAlign="center";x.fillStyle="#fff";
+    do{x.font=`italic ${size}px "Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif`;lines=wrapLines(x,`“${vpData.text}”`,W-180);size-=4}while(lines.length*size*1.4>H*.52&&size>34);
+    size+=4;const lh=size*1.38,top=H*.44-lines.length*lh/2;x.shadowColor="rgba(0,0,0,.45)";x.shadowBlur=24;
+    lines.forEach((l,i)=>x.fillText(l,W/2,top+i*lh+size));
+    x.font=`700 40px -apple-system,"Segoe UI",Roboto,Arial,sans-serif`;x.fillStyle="#ffd1d1";x.fillText(String(vpData.ref).toUpperCase(),W/2,top+lines.length*lh+size+70);
+    x.shadowBlur=0;x.font=`600 28px -apple-system,"Segoe UI",Roboto,Arial,sans-serif`;x.fillStyle="rgba(255,255,255,.7)";x.fillText("✝ Daily Bread",W/2,H-60);
+  };
+  if(vpStyle==="photo"&&myPhoto()){const im=new Image();im.onload=()=>{const k=Math.max(W/im.width,H/im.height);x.drawImage(im,(W-im.width*k)/2,(H-im.height*k)/2,im.width*k,im.height*k);const keep=vpStyle;vpStyle="__none";paint();vpStyle=keep};im.src=myPhoto()}else paint();
+}
+async function shareVersePic(){const c=$("#vpCanvas");if(!c)return;
+  c.toBlob(async b=>{if(!b)return toast("Couldn't make the picture");const name=`${vpData.ref.replace(/[^\w]+/g,"-")}.png`;
+    try{const f=new File([b],name,{type:"image/png"});if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:vpData.ref});return}}catch(e){if(e&&e.name==="AbortError")return}
+    const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();a.remove();toast("Picture saved ✓")},"image/png")}
+/* chapter quiz */
+let QZ=null;
+async function chapterQuiz(){
+  openSheet(`<div class="plan-title" style="font-size:24px">🎯 Quiz: ${esc(refName())}</div><div id="qzBox" style="margin-top:10px">${loadingHTML("Writing your questions…")}</div>`);
+  try{const r=await askJSON(`Write a 5-question multiple-choice quiz on ${refName()} to check understanding after reading it. Mix facts and meaning. JSON: {"questions":[{"q":"...","options":["a","b","c","d"],"answer":index 0-3,"why":"1 sentence with verse number"}]}`,"quick");
+    QZ={qs:(r.questions||[]).filter(q=>q&&q.options&&q.options.length>1).slice(0,5),i:0,score:0,picked:null};if(!QZ.qs.length)throw {message:"Couldn't make a quiz. Try again."};qzDraw()}
+  catch(e){const b=$("#qzBox");if(b)b.innerHTML=errHTML(e)}}
+function qzDraw(){const b=$("#qzBox");if(!b||!QZ)return;
+  if(QZ.i>=QZ.qs.length){const n=QZ.qs.length;if(QZ.score>=n-1)confetti();markActive();save();
+    return b.innerHTML=`<div style="text-align:center;padding:10px 0"><div style="font-size:48px">${QZ.score===n?"🏆":QZ.score>=n-1?"🎉":"📖"}</div><div class="plan-title" style="font-size:30px">${QZ.score} / ${n}</div><p class="muted">${QZ.score===n?"Perfect! You really know this chapter.":QZ.score>=n-2?"Great job!":"Read it once more and try again."}</p><div class="row" style="justify-content:center"><button class="btn gold" data-act="quiz">↻ New quiz</button><button class="btn" data-act="closeSheet">Done</button></div></div>`}
+  const q=QZ.qs[QZ.i],pk=QZ.picked;
+  b.innerHTML=`<div class="tiny">Question ${QZ.i+1} of ${QZ.qs.length}</div><div class="qz-q">${esc(q.q)}</div>${q.options.map((o,k)=>`<button class="qz-o ${pk==null?"":k===q.answer?"ok":k===pk?"no":""}" data-qz="${k}" ${pk==null?"":"disabled"}>${esc(o)}</button>`).join("")}
+   ${pk==null?"":`<div class="reflect" style="margin-top:10px">${pk===q.answer?"✓ Correct! ":"Not quite. "}${esc(q.why||"")}</div><button class="btn gold" data-act="qzNext" style="width:100%;margin-top:10px">${QZ.i+1<QZ.qs.length?"Next question →":"See my score"}</button>`}`}
+/* book intro */
+async function bookIntro(){
+  const bi=cur.bi,name=BOOKS[bi][0],ck=`db-bookintro-${bi}`;
+  openSheet(`<div class="plan-title" style="font-size:25px">📜 ${esc(name)}: book introduction</div><div id="biBox" style="margin-top:10px">${loadingHTML(`Opening ${esc(name)}…`)}</div>`);
+  try{let r=lsGet(ck);if(!r){r=await askJSON(`Introduce the book of ${name} for a Bible reader. JSON: {"author":"...","date":"approximate","audience":"...","purpose":"2 sentences","summary":"3 sentences","themes":[3-4 short themes],"outline":[{"range":"chs. 1–4","title":"..."}] (3-6),"key_verses":[{"ref":"...","text":"short exact BSB text"}] (2-3),"christ":"1-2 sentences on how the book points to Jesus","tips":"1-2 sentences on how to read it well"}`,"quick");lsSet(ck,r)}
+    const b=$("#biBox");if(!b)return;
+    b.innerHTML=`<div class="bi-facts"><div><small>Author</small><b>${esc(r.author)}</b></div><div><small>Written</small><b>${esc(r.date)}</b></div><div><small>For</small><b>${esc(r.audience)}</b></div></div>
+     <div class="prose"><p>${esc(r.summary)}</p><p><b>Why it was written:</b> ${esc(r.purpose)}</p></div>
+     ${(r.themes||[]).length?`<div class="sub">Big themes</div><div class="chips">${r.themes.map(t=>`<span class="chip">${esc(t)}</span>`).join("")}</div>`:""}
+     ${(r.outline||[]).length?`<div class="sub">Outline</div>${r.outline.map(o=>`<div class="kv"><b>${esc(o.range)}</b> — ${esc(o.title)}</div>`).join("")}`:""}
+     ${(r.key_verses||[]).length?`<div class="sub">Key verses</div>${r.key_verses.map(v=>`<div class="kv">${refLink(v.ref)}<div class="vt">“${esc(v.text)}”</div></div>`).join("")}`:""}
+     <div class="sub">Jesus in ${esc(name)}</div><div class="reflect">${esc(r.christ)}</div>
+     <div class="sub">Reading tip</div><div class="prose"><p>${esc(r.tips)}</p></div>
+     <div class="row"><a class="btn sm" rel="noopener" data-ext="1" href="${yt(`BibleProject ${name} overview`)}">▶ Watch the overview</a><button class="btn sm gold" data-open="${bi}:1">📖 Start chapter 1</button></div>`;
+  }catch(e){const b=$("#biBox");if(b)b.innerHTML=errHTML(e)}}
+/* timeline */
+const TIMELINE=[["🌍","Creation & the Fall","The beginning","God creates everything good; sin enters; the flood; Babel.","Genesis 1"],
+ ["⛺","The Patriarchs","~2000–1800 BC","God calls Abraham and promises a people and a blessing for all nations. Isaac, Jacob, Joseph.","Genesis 12"],
+ ["🔥","Exodus from Egypt","~1446 BC","Moses leads Israel out of slavery; the Passover; crossing the Red Sea.","Exodus 12"],
+ ["⛰️","Law & Wilderness","~1446–1406 BC","The Ten Commandments at Sinai; the tabernacle; 40 years in the desert.","Exodus 20"],
+ ["🏰","Conquest of Canaan","~1406–1375 BC","Joshua leads Israel into the Promised Land; Jericho falls.","Joshua 6"],
+ ["⚔️","The Judges","~1375–1050 BC","Cycles of sin and rescue: Deborah, Gideon, Samson. Ruth's story.","Judges 2"],
+ ["👑","United Kingdom","~1050–930 BC","Saul, then David, then Solomon; the temple is built in Jerusalem.","2 Samuel 7"],
+ ["💔","Divided Kingdom","930–586 BC","Israel (north) and Judah (south) split; prophets like Elijah, Isaiah and Jeremiah warn the people.","1 Kings 12"],
+ ["⛓️","Exile in Babylon","586–538 BC","Jerusalem falls; Daniel and Ezekiel serve God in a foreign land.","Daniel 1"],
+ ["🧱","Return & Rebuilding","538–430 BC","Ezra rebuilds the temple, Nehemiah the walls; Esther saves her people.","Nehemiah 2"],
+ ["🤫","Between the Testaments","~430–5 BC","About 400 years with no new Scripture; Greek then Roman rule.","Malachi 4"],
+ ["✝️","Life of Jesus","~5 BC–AD 30","Jesus is born, teaches, heals, dies on the cross and rises again.","Luke 2"],
+ ["🕊️","The Early Church","AD 30–60","The Holy Spirit comes at Pentecost; the gospel spreads; Paul's journeys.","Acts 2"],
+ ["✉️","Letters & Revelation","AD 48–95","Letters to the churches teach the faith; Revelation shows Christ's final victory.","Revelation 21"]];
+function timelineSheet(){
+  openSheet(`<div style="font-size:36px">🕰</div><div class="plan-title" style="font-size:25px;margin:4px 0">Bible timeline</div><p class="muted" style="font-size:14px">The big story of the Bible in 14 eras. Dates are approximate. Tap an era to read it.</p>
+   <div class="btl">${TIMELINE.map(([ic,t,d,s,ref])=>{const p=parseRef(ref);return `<button class="btl-i" ${p?`data-open="${p[0]}:${p[1]}"`:""}><span class="btl-ic">${ic}</span><span class="btl-t"><small>${esc(d)}</small><b>${esc(t)}</b><span>${esc(s)}</span><em>📖 ${esc(ref)}</em></span></button>`}).join("")}</div>`);
+}
+/* verse finder */
+function finderSheet(q){
+  openSheet(`<div style="font-size:36px">🔎</div><div class="plan-title" style="font-size:25px;margin:4px 0">Verse finder</div>
+   <form id="vfForm" class="row" style="flex-wrap:nowrap;margin:8px 0"><input type="text" id="vfIn" placeholder="What do you need a verse for?" value="${esc(q||"")}" style="flex:1"><button class="btn gold sm" type="submit">Find</button></form>
+   <div class="chips">${["Anxiety","Strength","Forgiveness","Hope","Fear","Healing","Marriage","Patience","Grief","Purpose"].map(w=>`<button class="chip" data-vf="${w}">${w}</button>`).join("")}</div><div id="vfOut" style="margin-top:12px"></div>`);
+  if(q)findVerses(q);
+}
+async function findVerses(q){const o=$("#vfOut");q=String(q||"").trim();if(!o||!q)return;o.innerHTML=loadingHTML(`Finding verses about ${esc(q)}…`);
+  try{const r=await askJSON(`Find 7 of the most helpful Bible verses about "${q}". Use the ${tr().name} (${tr().abbr}) wording. JSON: {"verses":[{"ref":"Book C:V","text":"exact text","note":"1 short sentence on why it helps"}]}`,"quick");
+    if(!$("#vfOut"))return;o.innerHTML=(r.verses||[]).map(v=>`<div class="kv"><b>${esc(v.ref)}</b><div class="vt">“${esc(v.text)}”</div><div class="nt">${esc(v.note)}</div><div class="row" style="margin-top:6px">${parseRef(v.ref)?refLink(v.ref):""}<button class="btn sm ghost" data-save-va="${esc(v.ref)}|${esc(v.text)}">☆ Save</button><button class="btn sm ghost" data-mem-add="${esc(v.ref)}|${esc(v.text)}">🧠 Memorize</button></div></div>`).join("")+`<div class="tiny">${esc(tr().abbr)}</div>`;markActive();save()}
+  catch(e){o.innerHTML=errHTML(e)}}
+/* quiet time timer */
+let QT={end:0,len:0,iv:null};
+function quietSheet(){
+  const running=QT.end>Date.now();
+  openSheet(`<div style="font-size:36px">⏳</div><div class="plan-title" style="font-size:25px;margin:4px 0">Quiet time timer</div><p class="muted" style="font-size:14px">Set aside time to read, pray and be still. A soft chime plays when time is up.</p>
+   <div class="qt-ring"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="52" class="qt-bg"/><circle cx="60" cy="60" r="52" class="qt-fg" id="qtArc"/></svg><div class="qt-time" id="qtTime">${running?"":"Ready"}</div></div>
+   ${running?`<button class="btn" data-act="qtStop" style="width:100%">Stop</button>`:`<div class="chips" style="justify-content:center">${[5,10,15,20,30].map(m=>`<button class="chip" data-qt="${m}">${m} min</button>`).join("")}</div>`}
+   <div class="tiny" style="text-align:center;margin-top:10px">Total quiet time: ${Math.round(S.quietMin||0)} minutes</div>`);
+  qtTick();
+}
+function qtStart(m){QT={end:Date.now()+m*60000,len:m*60000,iv:null};clearInterval(QT.iv);QT.iv=setInterval(qtTick,500);buzz(15);quietSheet()}
+function qtTick(){const el=$("#qtTime"),arc=$("#qtArc"),left=QT.end-Date.now();
+  if(QT.end&&left<=0){clearInterval(QT.iv);S.quietMin=(S.quietMin||0)+QT.len/60000;QT.end=0;markActive();save();qtChime();toast("Quiet time complete 🙏");if(el){quietSheet();confetti()}return}
+  if(!el)return;if(QT.end>Date.now()){const s=Math.ceil(left/1000);el.textContent=`${Math.floor(s/60)}:${String(s%60).padStart(2,"0")}`;if(arc)arc.style.strokeDashoffset=String(327*(1-left/QT.len))}else if(arc)arc.style.strokeDashoffset="0"}
+function qtChime(){try{const a=new (window.AudioContext||window.webkitAudioContext)();[523.25,659.25,783.99].forEach((f,i)=>{const o=a.createOscillator(),g=a.createGain();o.type="sine";o.frequency.value=f;g.gain.setValueAtTime(0,a.currentTime+i*.35);g.gain.linearRampToValueAtTime(.18,a.currentTime+i*.35+.05);g.gain.exponentialRampToValueAtTime(.001,a.currentTime+i*.35+2.2);o.connect(g).connect(a.destination);o.start(a.currentTime+i*.35);o.stop(a.currentTime+i*.35+2.3)})}catch(e){}buzz([60,80,60])}
 
 /* ---------- Themes ---------- */
 const THEMES=[
