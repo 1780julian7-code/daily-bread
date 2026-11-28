@@ -1043,6 +1043,57 @@ body.modern #readBar,body.modern #songDock{background:var(--dock);border:0;box-s
 body.modern .ripple{background:color-mix(in srgb,var(--accent) 22%,transparent)}
 body.modern .err{color:#d70015}
 body.modern.dark .err{color:#ff6961}
+
+/* =================== MODERN POLISH =================== */
+.sec-h{display:none}
+body.modern .sec-h{display:block;font-family:var(--serif);font-weight:800;font-size:22px;letter-spacing:-.02em;margin:26px 4px 12px;color:var(--text)}
+body.modern .wrap{padding-left:18px;padding-right:18px}
+body.modern .card{padding:20px;margin-bottom:16px}
+/* greeting: compact, no orb */
+body.modern .greet{gap:12px;margin:18px 4px 14px}
+body.modern .tod{width:44px;height:44px;font-size:22px}
+body.modern #v-today .greet .hello{font-size:34px}
+/* stats in one card with dividers */
+body.modern .stats-strip{gap:0;background:var(--card);border-radius:var(--r);box-shadow:var(--sh);overflow:hidden;margin-bottom:16px}
+body.modern .ss{box-shadow:none!important;border-radius:0;padding:14px 12px;background:transparent!important}
+body.modern .ss+.ss{border-left:1px solid var(--line)}
+body.modern .ss-ic{top:12px;right:12px;font-size:15px;opacity:.9}
+body.modern .ss b{font-size:28px;letter-spacing:-.02em}
+/* search pill */
+body.modern .smart{border-radius:999px;padding:5px 5px 5px 16px;margin-bottom:10px}
+body.modern .smart-go,body.modern .smart .mic{border-radius:999px;width:38px;height:38px}
+body.modern .smart-hints{margin-bottom:6px}
+body.modern .smart-hints .chip{background:var(--card);box-shadow:var(--sh)}
+/* verse of the day: soft accent wash + elegant type */
+body.modern .card.hero.votd{background:linear-gradient(160deg,color-mix(in srgb,var(--accent) 13%,var(--card)) 0%,var(--card) 62%)!important;padding:26px 24px 80px;border-radius:24px}
+body.modern .votd .verse{font-size:27px;line-height:1.42;letter-spacing:-.005em}
+body.modern .hero-quote{font-family:var(--scripture);font-size:150px;top:-18px;right:16px;color:color-mix(in srgb,var(--accent) 18%,transparent)}
+body.modern .votd .label{margin-bottom:14px}
+body.modern .hero-actions{left:24px;right:24px;bottom:20px}
+/* tiles become an app-icon grid */
+body.modern .tiles{grid-template-columns:repeat(3,1fr);gap:18px 10px;background:var(--card);border-radius:24px;box-shadow:var(--sh);padding:20px 10px 16px;margin-bottom:6px}
+body.modern .tile{background:transparent!important;box-shadow:none!important;min-height:0;padding:0;align-items:center;text-align:center;gap:6px}
+body.modern .tile .ti{width:58px;height:58px;border-radius:17px;font-size:27px;margin:0;box-shadow:0 6px 14px -6px rgba(0,0,0,.35)}
+body.modern .tile b{font-size:12.5px;font-weight:600;letter-spacing:-.01em}
+body.modern .tile small{display:none}
+body.modern .tile:active .ti{transform:scale(.92)}
+body.modern .tile .ti{filter:none!important}
+/* mood: compact pills */
+body.modern .mood-chips{gap:8px}
+body.modern .mchip{flex-direction:row;min-width:0;padding:9px 13px;border-radius:999px;font-size:13px;gap:6px}
+body.modern .mchip span{font-size:18px}
+/* For You rows: list style */
+body.modern #forYou .fy{background:transparent;border-radius:0;padding:12px 2px;margin:0;border-bottom:1px solid var(--line)}
+body.modern #forYou .fy:last-child{border-bottom:0}
+body.modern .fy-ic{border-radius:12px}
+/* reading card */
+body.modern .card.reading{gap:6px 18px}
+body.modern .reading .plan-title{font-size:24px}
+/* header + menu */
+body.modern header.top .brand small{display:none}
+body.modern nav.tabs{padding:4px!important;border-radius:16px!important}
+body.modern nav.tabs button{border-radius:12px;font-weight:600}
+body.modern.dark .tiles,body.modern.dark .stats-strip{box-shadow:none}
 </style>
 </head>
 <body>
@@ -1103,6 +1154,7 @@ body.modern.dark .err{color:#ff6961}
       </div>
     </div>
 
+    <div class="sec-h">Explore</div>
     <div class="tiles">
       <button class="tile t-read" data-go="read"><span class="ti">📖</span><b>Read</b><small>Open the Bible</small></button>
       <button class="tile t-devo" data-go="devo"><span class="ti">☀️</span><b>Devotion</b><small>Today's word</small></button>
@@ -1115,6 +1167,7 @@ body.modern.dark .err{color:#ff6961}
       <button class="tile t-videos" data-go="videos"><span class="ti">▶️</span><b>Videos</b><small>Watch & worship</small></button>
     </div>
 
+    <div class="sec-h">Your day</div>
     <div class="card glowborder" id="forYou"></div>
 
     <div class="card mood" id="moodCard">
