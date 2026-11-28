@@ -366,7 +366,7 @@ html,body{background:var(--bg)}
 body{padding-bottom:calc(110px + env(safe-area-inset-bottom))}
 /* animated aurora backdrop */
 .aurora{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
-.aurora i{position:absolute;border-radius:50%;filter:blur(60px);opacity:.55;mix-blend-mode:screen}
+.aurora i{position:absolute;border-radius:50%;filter:blur(50px);opacity:.9;mix-blend-mode:screen}
 .aurora .a1{width:70vmax;height:70vmax;left:-25vmax;top:-30vmax;background:radial-gradient(circle,#6b4dff 0%,transparent 60%);animation:drift1 22s ease-in-out infinite alternate}
 .aurora .a2{width:60vmax;height:60vmax;right:-25vmax;top:10vh;background:radial-gradient(circle,#ff4f9a 0%,transparent 60%);opacity:.38;animation:drift2 26s ease-in-out infinite alternate}
 .aurora .a3{width:65vmax;height:65vmax;left:-10vmax;bottom:-40vmax;background:radial-gradient(circle,#18c7b0 0%,transparent 60%);opacity:.32;animation:drift3 30s ease-in-out infinite alternate}
@@ -1217,6 +1217,29 @@ body.modern .btn:active,body.modern .fy:active,body.modern .mchip:active{transfo
 .qt-ring svg{width:100%;height:100%;transform:rotate(-90deg)}
 .qt-bg{fill:none;stroke:var(--line);stroke-width:8}.qt-fg{fill:none;stroke:var(--accent,var(--gold));stroke-width:8;stroke-linecap:round;stroke-dasharray:327;stroke-dashoffset:0;transition:stroke-dashoffset .5s linear}
 .qt-time{position:absolute;inset:0;display:grid;place-items:center;font-size:42px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+
+/* =================== CLEAN GRADIENT BACKGROUND (no picture) =================== */
+#mesh{position:fixed;inset:0;z-index:-2;pointer-events:none;overflow:hidden;display:none}
+body.modern:not(.haspic) #mesh{display:block}
+body.modern:not(.haspic){background:transparent!important}
+html:has(body.modern:not(.haspic)){background:#f3f5fb}
+html:has(body.modern.dark:not(.haspic)){background:#05070f}
+#mesh i{position:absolute;border-radius:50%;filter:blur(60px);opacity:.55;will-change:transform}
+#mesh i:nth-child(1){width:70vmax;height:70vmax;left:-25vmax;top:-30vmax;background:color-mix(in srgb,var(--accent) 60%,transparent);animation:m1 22s ease-in-out infinite alternate}
+#mesh i:nth-child(2){width:60vmax;height:60vmax;right:-28vmax;top:10vh;background:color-mix(in srgb,var(--accent2) 50%,transparent);animation:m2 26s ease-in-out infinite alternate}
+#mesh i:nth-child(3){width:55vmax;height:55vmax;left:-15vmax;bottom:-30vmax;background:color-mix(in srgb,var(--accent2) 42%,transparent);animation:m3 30s ease-in-out infinite alternate}
+#mesh i:nth-child(4){width:45vmax;height:45vmax;right:-10vmax;bottom:-20vmax;background:color-mix(in srgb,var(--accent) 48%,transparent);animation:m1 24s ease-in-out infinite alternate-reverse}
+body.modern.dark #mesh i{opacity:.55}
+@keyframes m1{to{transform:translate(12vw,10vh) scale(1.12)}}
+@keyframes m2{to{transform:translate(-14vw,14vh) scale(.9)}}
+@keyframes m3{to{transform:translate(16vw,-12vh) scale(1.1)}}
+body.modern:not(.haspic){--bg:#f3f5fb}
+body.modern.dark:not(.haspic){--bg:#05070f}
+body.modern:not(.haspic) .card,body.modern:not(.haspic) .tiles,body.modern:not(.haspic) .stats-strip{background:color-mix(in srgb,var(--card) 82%,transparent)!important;backdrop-filter:blur(22px) saturate(1.5);-webkit-backdrop-filter:blur(22px) saturate(1.5);border:1px solid color-mix(in srgb,#fff 55%,transparent)!important}
+body.modern.dark:not(.haspic) .card,body.modern.dark:not(.haspic) .tiles,body.modern.dark:not(.haspic) .stats-strip{border-color:rgba(255,255,255,.07)!important}
+body.modern:not(.haspic) .sec-h{background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+body.modern:not(.haspic) #v-today .greet .hello{background:linear-gradient(90deg,var(--text) 30%,var(--accent) 75%,var(--accent2))!important;-webkit-background-clip:text!important;background-clip:text!important;-webkit-text-fill-color:transparent!important}
+@media (prefers-reduced-motion:reduce){#mesh i{animation:none!important}}
 </style>
 </head>
 <body>
@@ -2997,10 +3020,11 @@ function applyPic(){
   const id=S.bgPic||"none",u=id==="none"?"":picURL(id);
   el.style.backgroundImage=u?(id==="photo"?"linear-gradient(rgba(0,0,0,.42),rgba(0,0,0,.12) 45%,rgba(0,0,0,.3)),":"")+u:"";
   document.body.classList.toggle("haspic",!!u);
+  let mesh=document.getElementById("mesh");if(!mesh){mesh=document.createElement("div");mesh.id="mesh";mesh.setAttribute("aria-hidden","true");mesh.innerHTML="<i></i><i></i><i></i><i></i>";document.body.prepend(mesh)}
   const m=document.querySelector('meta[name="theme-color"]');if(m&&u)m.content="#071033";
   if(typeof bgFx==="function"){bgFx();if(u)shootLoop()}
 }
-function lookMigrate(){if(S.lookV2)return;S.lookV2=1;S.theme="glory";S.bgPic="sunset";lsSet("db-theme","glory");try{save()}catch(e){}}
+function lookMigrate(){let ch=false;if(!S.lookV2){S.lookV2=1;S.theme="glory";lsSet("db-theme","glory");ch=true}if(!S.lookV3){S.lookV3=1;S.bgPic="none";ch=true}if(ch)try{save()}catch(e){}}
 function setPhoto(file){
   if(!file)return;const r=new FileReader();
   r.onload=()=>{const img=new Image();img.onload=()=>{const k=Math.min(1,1400/Math.max(img.width,img.height)),c=document.createElement("canvas");c.width=Math.round(img.width*k);c.height=Math.round(img.height*k);c.getContext("2d").drawImage(img,0,0,c.width,c.height);
