@@ -940,6 +940,109 @@ body.dock-open #readBar{bottom:calc(282px + env(safe-area-inset-bottom))!importa
 .vrow span:first-child{flex:1;min-width:0}.vrow b{display:block;font-size:14.5px}.vrow small{display:block;font-size:12px;color:var(--muted)}
 .vrow.on{border-color:var(--rose);background:color-mix(in srgb,var(--rose) 14%,transparent)}
 .vplay2{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--grad);color:#fff;font-size:11px;padding-left:2px}
+
+/* =================== CLEAN & MODERN DESIGN =================== */
+body.modern[data-theme]{
+  --bg:#f5f5f7;--bg2:#ffffff;--card:#ffffff;--card2:#f0f0f3;--line:rgba(0,0,0,.08);--text:#1d1d1f;--text2:#3a3a3c;--muted:#6e6e73;
+  --gold:var(--accent);--gold2:var(--accent);--rose:var(--accent);--violet:var(--accent);--sage:#34c759;
+  --grad:linear-gradient(var(--accent),var(--accent));--glowc:rgba(0,0,0,0);--dock:rgba(255,255,255,.86);--sheet:#ffffff;
+  --sans:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --serif:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --scripture:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --hello:none;--stars:0;--r:20px;
+  --sh:0 1px 2px rgba(0,0,0,.04),0 6px 20px rgba(0,0,0,.06);
+}
+body.modern.dark[data-theme]{
+  --bg:#000000;--bg2:#1c1c1e;--card:#1c1c1e;--card2:#2c2c2e;--line:rgba(255,255,255,.1);--text:#f5f5f7;--text2:#d1d1d6;--muted:#98989f;
+  --dock:rgba(28,28,30,.86);--sheet:#1c1c1e;--sh:0 1px 0 rgba(255,255,255,.04)
+}
+body.modern{background:var(--bg);color:var(--text);font-family:var(--sans)}
+body.modern .aurora,body.modern .glow,body.modern #sky,body.modern .rays,body.modern .hero-rays,body.modern .hero-scene{display:none!important}
+/* cards */
+body.modern .card{background:var(--card)!important;border:0!important;box-shadow:var(--sh)!important;border-radius:var(--r)}
+body.modern .card::before,body.modern .card::after,body.modern .glowborder::after{display:none!important}
+body.modern .label{color:var(--muted);letter-spacing:.06em;font-size:12px;font-weight:700}
+body.modern .label .dot{background:var(--accent);box-shadow:none}
+body.modern .sub{color:var(--muted);letter-spacing:.06em}
+body.modern .plan-title,body.modern .devo h2,body.modern .chapter h2{font-family:var(--serif);font-weight:800;letter-spacing:-.025em}
+body.modern .hello{background:none!important;-webkit-text-fill-color:var(--text);color:var(--text);font-family:var(--serif);font-weight:800;letter-spacing:-.03em}
+/* header & nav */
+body.modern .brand .logo{background:var(--accent);box-shadow:none}
+body.modern .brand h1{font-family:var(--serif);font-weight:800;letter-spacing:-.03em}
+body.modern .brand h1 span{background:none;-webkit-text-fill-color:var(--accent);color:var(--accent)}
+body.modern .streak{background:var(--card);border:0;box-shadow:var(--sh);color:var(--text)}
+body.modern .streak .sl{color:var(--muted)}
+body.modern .theme-btn{background:var(--card);border:0;box-shadow:var(--sh)}
+body.modern.scrolled header.top{background:color-mix(in srgb,var(--bg) 85%,transparent);box-shadow:0 1px 0 var(--line)}
+body.modern nav.tabs{background:var(--dock)!important;border:0!important;box-shadow:var(--sh)!important}
+body.modern nav.tabs button{color:var(--muted)}
+body.modern nav.tabs button.on{background:color-mix(in srgb,var(--accent) 13%,transparent)!important;color:var(--accent)!important;box-shadow:none!important}
+/* buttons, chips, inputs */
+body.modern .btn{background:var(--card2);border:0;color:var(--text);box-shadow:none}
+body.modern .btn.gold,body.modern .smart-go,body.modern #musicFab,body.modern .song-play,body.modern .vplay2,body.modern #readBar #rbToggle,body.modern .sd-bar #sdToggle{background:var(--accent)!important;color:#fff!important;box-shadow:none!important;text-shadow:none!important}
+body.modern .btn.glass{background:color-mix(in srgb,var(--accent) 12%,transparent);color:var(--accent);border:0;backdrop-filter:none}
+body.modern .chip{background:var(--card2);border:0;color:var(--text)}
+body.modern .chip.on,body.modern .chip:hover{background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--accent);border:0}
+body.modern .seg{background:var(--card2);border:0}
+body.modern .seg button.on{background:var(--card)!important;color:var(--text)!important;box-shadow:0 1px 3px rgba(0,0,0,.12)!important;text-shadow:none}
+body.modern.dark .seg button.on{background:#48484a!important}
+body.modern select,body.modern input[type=text],body.modern textarea{background:var(--card2)!important;border:0!important;color:var(--text)}
+body.modern .smart{background:var(--card);box-shadow:var(--sh)}
+body.modern .smart::before{display:none}
+body.modern .smart:focus-within{box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 30%,transparent)}
+/* greeting & stats */
+body.modern .tod{background:color-mix(in srgb,var(--accent) 12%,transparent)!important;box-shadow:none!important;animation:none}
+body.modern .tod::after{display:none}
+body.modern .greet .date{background:none;border:0;padding:0;color:var(--accent);font-size:12px;letter-spacing:.08em}
+body.modern .ss{background:var(--card)!important;color:var(--text);border:0;box-shadow:var(--sh)}
+body.modern .ss::after{display:none}
+body.modern .ss b{color:var(--text)}
+body.modern .ss small{color:var(--muted);opacity:1}
+body.modern .ss.s1 b{color:#ff6a3d}body.modern .ss.s2 b{color:var(--accent)}body.modern .ss.s3 b{color:#30b0c7}
+/* verse of the day */
+body.modern .card.hero.votd{background:var(--card)!important;padding:24px 22px 76px;min-height:0}
+body.modern .votd .verse{color:var(--text);font-family:var(--scripture);text-shadow:none;font-weight:500}
+body.modern .votd .label{color:var(--accent)}
+body.modern .votd .ref{background:color-mix(in srgb,var(--accent) 10%,transparent);color:var(--accent);border:0;backdrop-filter:none}
+body.modern .hero-quote{color:color-mix(in srgb,var(--accent) 12%,transparent)}
+body.modern .card.hero::after{display:none}
+/* tiles: iOS-style */
+body.modern .tile{background:var(--card)!important;color:var(--text)!important;border:0;box-shadow:var(--sh)!important;min-height:96px}
+body.modern .tile::before,body.modern .tile::after{display:none}
+body.modern .tile small{color:var(--muted)}
+body.modern .tile .ti{border:0;backdrop-filter:none;border-radius:12px;font-size:20px;color:#fff}
+body.modern .t-read .ti{background:#ff6a3d}body.modern .t-devo .ti{background:#ffb020}body.modern .t-ask .ti{background:#7c5cff}
+body.modern .t-plans .ti{background:#20b29a}body.modern .t-courses .ti{background:#3b82f6}body.modern .t-trivia .ti{background:#ec4899}
+body.modern .t-people .ti{background:#a855f7}body.modern .t-places .ti{background:#22c55e}body.modern .t-videos .ti{background:#ef4444}
+/* reading card, ring, misc */
+body.modern .ring-bg{stroke:var(--card2)}
+body.modern .ring-fg{stroke:var(--accent);filter:none}
+body.modern .check{background:var(--card2);border:0}
+body.modern .check .box{border-color:var(--accent)}
+body.modern .bar{background:var(--card2)}body.modern .bar i{background:var(--accent)}
+body.modern .fy,body.modern .kv,body.modern .dayrow,body.modern .active-plan,body.modern .evt,body.modern .song,body.modern .vrow,body.modern .mchip,body.modern .hl-note{background:var(--card2);border:0}
+body.modern .fy-ic,body.modern .avatar,body.modern .music-orb{background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--accent)}
+body.modern .mchip.on{background:var(--accent);color:#fff}
+body.modern .dayrow.next,body.modern .song.now,body.modern .vrow.on{background:color-mix(in srgb,var(--accent) 12%,transparent)}
+body.modern .prayer{background:color-mix(in srgb,var(--accent) 7%,var(--card));border:0}
+body.modern .reflect{background:var(--card2);border:0}
+body.modern .devo .scrip{border-image:none;border-left:3px solid var(--accent);color:var(--text)}
+body.modern .scrip-lite{background:color-mix(in srgb,var(--accent) 8%,transparent);border-left-color:var(--accent)}
+body.modern .scripture{color:var(--text)}
+body.modern .vh,body.modern .scripture sup{color:var(--accent)}
+body.modern .pcard,body.modern .course,body.modern .vcard{background:var(--card)!important;box-shadow:var(--sh);border:0}
+body.modern .course .ic,body.modern .pcard .em{filter:none}
+body.modern .sheet{background:var(--sheet);border:0}
+body.modern .toast{background:var(--text);color:var(--bg);box-shadow:var(--sh)}
+body.modern #ptr{background:var(--accent);box-shadow:none}
+body.modern .install-banner{background:var(--card);border:0;box-shadow:var(--sh)}
+body.modern .install-banner .ib-go{background:var(--accent)}
+body.modern .tcard,body.modern .bgcard{background:var(--card2)}
+body.modern .tcard.on,body.modern .bgcard.on{border-color:var(--accent);box-shadow:none}
+body.modern #readBar,body.modern #songDock{background:var(--dock);border:0;box-shadow:0 10px 30px rgba(0,0,0,.15)}
+body.modern .ripple{background:color-mix(in srgb,var(--accent) 22%,transparent)}
+body.modern .err{color:#d70015}
+body.modern.dark .err{color:#ff6961}
 </style>
 </head>
 <body>
@@ -1187,7 +1290,7 @@ body.dock-open #readBar{bottom:calc(282px + env(safe-area-inset-bottom))!importa
       <button class="btn" data-act="music" style="margin-top:12px;width:100%">🎵 Background worship music</button>
       <button class="btn tts-only" data-rb="voice" style="margin-top:8px;width:100%" hidden>🗣️ Reading voice & speed</button>
       <button class="btn" data-act="gestures" style="margin-top:8px;width:100%">👆 Fun gestures guide</button>
-      <button class="btn" data-act="themes" style="margin-top:8px;width:100%">🎨 Theme, colors & background</button>
+      <button class="btn" data-act="themes" style="margin-top:8px;width:100%">🎨 Appearance: design, light/dark & colors</button>
       <button class="btn" data-act="installGuide" style="margin-top:8px;width:100%">📲 Install on your phone</button>
     </div>
   </section>
@@ -2210,6 +2313,8 @@ document.addEventListener("click",e=>{
   if(t.dataset.act==="gestures")return gestureGuide();
   if(t.classList.contains("tile")){const ti=t.querySelector(".ti");if(ti){ti.classList.remove("hop");void ti.offsetWidth;ti.classList.add("hop")}}
   if(t.dataset.themePick){S.theme=t.dataset.themePick;S.themeChosen=true;applyTheme(S.theme);save();document.querySelectorAll(".tcard").forEach(b=>b.classList.toggle("on",b===t));return}
+  if(t.dataset.style){S.style=t.dataset.style;save();applyStyle();buzz(10);document.querySelectorAll("[data-style]").forEach(b=>b.classList.toggle("on",b===t));$("#modeRow").hidden=!isModern();$("#bgSection").hidden=isModern();return}
+  if(t.dataset.mode){S.appearance=t.dataset.mode;save();applyStyle();buzz(10);document.querySelectorAll("[data-mode]").forEach(b=>b.classList.toggle("on",b===t));return}
   if(t.dataset.bgPick){S.bg=t.dataset.bgPick;applyBg();save();buzz(10);document.querySelectorAll(".bgcard").forEach(b=>b.classList.toggle("on",b===t));return}
   if(t.dataset.act==="themeDone"){S.themeChosen=true;save();closeSheet();return gestureTip()}
   if(t.dataset.hl!==undefined&&t.classList.contains("hl-dot"))return hlFromSheet(t.dataset.hl,t);
@@ -2363,16 +2468,36 @@ function applyTheme(id){
   const cs=(th.grad.match(/#[0-9a-f]{6}/gi)||[]);document.querySelectorAll("#rg stop").forEach((st,i)=>{if(cs[i])st.setAttribute("stop-color",cs[i])});
   lsSet("db-theme",th.id);
   if(typeof BGX!=="undefined")setTimeout(()=>BGX.readCols(),30);
+  if(typeof applyStyle==="function")applyStyle();
 }
+const ACCENT={royal:"#b8862b",aurora:"#7c5cff",galilee:"#0a84ff",eden:"#2f9e57",sunrise:"#f26b1d",parchment:"#a0582a",snow:"#3b5bdb"};
+const ACCENT_DARK={royal:"#e3b55a",aurora:"#a48bff",galilee:"#4aa8ff",eden:"#4cc777",sunrise:"#ff8c42",parchment:"#d08a55",snow:"#7b93ff"};
+const mqDark=matchMedia("(prefers-color-scheme: dark)");
+function isModern(){return (S.style||"modern")==="modern"}
+function applyStyle(){
+  const modern=isModern(),mode=S.appearance||"auto",dark=modern&&(mode==="dark"||(mode==="auto"&&mqDark.matches));
+  document.body.classList.toggle("modern",modern);document.body.classList.toggle("dark",dark);
+  const th=document.body.dataset.theme||"royal";
+  document.body.style.setProperty("--accent",(dark?ACCENT_DARK:ACCENT)[th]||"#0a84ff");
+  const m=document.querySelector('meta[name="theme-color"]');if(m&&modern)m.content=dark?"#000000":"#f5f5f7";
+  if(typeof BGX!=="undefined"){if(modern){if(BGX.mode!=="minimal")BGX.set("minimal")}else if(BGX.mode!==(S.bg||"constellation"))BGX.set(S.bg||"constellation")}
+}
+mqDark.addEventListener&&mqDark.addEventListener("change",()=>applyStyle());
 function themePicker(first){
   const cur=document.body.dataset.theme;
-  openSheet(`<div style="font-size:38px">🎨</div><div class="plan-title" style="font-size:26px;margin:4px 0">${first?"Pick your new look":"Theme & background"}</div>
-   <p class="muted" style="font-size:14.5px;line-height:1.5">Tap a theme to preview it instantly. You can change it anytime with the 🎨 button.</p>
+  const modern=isModern(),mode=S.appearance||"auto";
+  openSheet(`<div style="font-size:38px">🎨</div><div class="plan-title" style="font-size:26px;margin:4px 0">${first?"Pick your new look":"Appearance"}</div>
+   <div class="sub" style="margin-top:10px">Design</div>
+   <div class="seg" style="margin:0"><button data-style="modern" class="${modern?"on":""}">✨ Clean & modern</button><button data-style="glow" class="${!modern?"on":""}">🌌 Glow</button></div>
+   <div id="modeRow" ${modern?"":"hidden"}><div class="sub">Light or dark</div>
+   <div class="seg" style="margin:0">${[["auto","📱 Auto"],["light","☀️ Light"],["dark","🌙 Dark"]].map(([k,l])=>`<button data-mode="${k}" class="${mode===k?"on":""}">${l}</button>`).join("")}</div></div>
+   <div class="sub">${modern?"Accent color":"Theme"}</div>
+   <p class="muted" style="font-size:13.5px;line-height:1.5;margin-bottom:4px">Tap to preview instantly.</p>
    <div class="tgrid">${THEMES.map(t=>`<button class="tcard ${t.id===cur?"on":""}" data-theme-pick="${t.id}">
      <div class="pv" style="background:${t.bg}"><span class="bar2" style="background:${t.grad}"></span>${t.sw.map(c=>`<i style="background:${c}"></i>`).join("")}</div>
      <div class="nm"><b>${t.name}</b><small>${t.desc}</small></div></button>`).join("")}</div>
-   <div class="sub" style="margin-top:18px">Background</div>
-   <div class="bggrid">${BGS.map(b=>`<button class="bgcard ${b.id===(S.bg||"constellation")?"on":""}" data-bg-pick="${b.id}"><span class="bgi">${b.ic}</span><span><b>${b.name}</b><small>${b.desc}</small></span></button>`).join("")}</div>
+   <div id="bgSection" ${modern?"hidden":""}><div class="sub" style="margin-top:18px">Background</div>
+   <div class="bggrid">${BGS.map(b=>`<button class="bgcard ${b.id===(S.bg||"constellation")?"on":""}" data-bg-pick="${b.id}"><span class="bgi">${b.ic}</span><span><b>${b.name}</b><small>${b.desc}</small></span></button>`).join("")}</div></div>
    <button class="btn gold" data-act="themeDone" style="width:100%;margin-top:14px">Done</button>`);
 }
 
@@ -3130,11 +3255,11 @@ const BGX=(function(){
   document.addEventListener("mouseleave",()=>{ptr.on=false});
   return {set,readCols,get mode(){return mode}};
 })();
-function applyBg(){BGX.set(S.bg||"constellation")}
+function applyBg(){if(typeof isModern==="function"&&isModern())BGX.set("minimal");else BGX.set(S.bg||"constellation")}
 
 /* ---------- Boot ---------- */
 fillPicker();fillCh();renderCats();renderPeopleCats();renderPlaceCats();
-applyTheme(S.theme||lsGet("db-theme")||"royal");applyFont();applyBg();applyNav();
+applyTheme(S.theme||lsGet("db-theme")||"royal");applyFont();applyBg();applyNav();applyStyle();
 votdPending=!!(window.claude&&!(S.votd&&S.votd.date===todayKey()));
 show(location.hash.slice(1)||"today",false);
 
@@ -3153,7 +3278,7 @@ show(location.hash.slice(1)||"today",false);
     if(snap.exists){S=Object.assign(unlock(DEFAULT),unlock(snap.data()));S.readCh=S.readCh||{};lsSet("db-state",S)}
     else{await flush()}
     $("#syncNote").textContent=window.DB_STANDALONE?"✓ Your progress, notes and saved items are saved on this device.":"✓ Your progress, notes and saved items sync privately across your devices.";
-    applyTheme(S.theme||lsGet("db-theme")||"royal");applyFont();applyNav();if(BGX.mode!==(S.bg||"constellation"))applyBg();
+    applyTheme(S.theme||lsGet("db-theme")||"royal");applyFont();applyNav();applyStyle();if(BGX.mode!==(S.bg||"constellation"))applyBg();
     const tab=location.hash.slice(1)||"today";if(tab==="today")renderToday();if(tab==="journal")renderJournal();
   }catch(e){console.warn(e);$("#syncNote").textContent="Saved on this device only."}
   ensureVotd();initMic();
