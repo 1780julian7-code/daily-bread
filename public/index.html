@@ -1240,6 +1240,30 @@ body.modern.dark:not(.haspic) .card,body.modern.dark:not(.haspic) .tiles,body.mo
 body.modern:not(.haspic) .sec-h{background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 body.modern:not(.haspic) #v-today .greet .hello{background:linear-gradient(90deg,var(--text) 30%,var(--accent) 75%,var(--accent2))!important;-webkit-background-clip:text!important;background-clip:text!important;-webkit-text-fill-color:transparent!important}
 @media (prefers-reduced-motion:reduce){#mesh i{animation:none!important}}
+
+/* =================== READER STUDY AIDS =================== */
+#snBtn.on{background:color-mix(in srgb,var(--accent,var(--gold)) 16%,transparent)!important;color:var(--accent,var(--gold))!important}
+.snote{display:block;margin:8px 0 12px;padding:10px 12px;border-radius:12px;font-family:var(--sans);font-size:14px;line-height:1.5;color:var(--text2,var(--text));background:color-mix(in srgb,var(--accent,var(--gold)) 8%,transparent);border-left:3px solid var(--accent,var(--gold));animation:stagIn .4s ease both}
+.snote b{color:var(--accent,var(--gold));font-weight:700;margin-right:2px}
+.snote.simple{background:color-mix(in srgb,var(--accent2,var(--gold)) 8%,transparent);border-left-color:var(--accent2,var(--gold));font-size:14.5px}
+.snote.simple b{display:block;color:var(--accent2,var(--gold));margin-bottom:2px}
+.sn-load{opacity:.8;font-style:italic}
+.opt-row{display:flex;flex-direction:column;align-items:flex-start;gap:2px;width:100%;text-align:left;padding:13px 14px;margin:8px 0;border-radius:14px;border:1.5px solid var(--line);background:var(--card2);color:var(--text);font:inherit;cursor:pointer}
+.opt-row b{font-size:15.5px}.opt-row small{font-size:12.5px;color:var(--muted);line-height:1.35}
+.opt-row.on{border-color:var(--accent,var(--gold));background:color-mix(in srgb,var(--accent,var(--gold)) 10%,var(--card2))}
+body.rd-lines #chText .v{display:block;margin:0 0 10px}
+body.rd-nonum #chText sup{display:none}
+body.rd-sans #chText,body.rd-sans .rd-preview{font-family:var(--sans)!important}
+body[data-rdsp="tight"] #chText,body[data-rdsp="tight"] .rd-preview{line-height:1.4!important}
+body[data-rdsp="roomy"] #chText,body[data-rdsp="roomy"] .rd-preview{line-height:1.95!important}
+body.rd-lines .rd-preview .v{display:block;margin-bottom:6px}body.rd-nonum .rd-preview sup{display:none}
+.rd-preview{margin-top:16px;padding:14px;border-radius:14px;background:var(--card2);font-size:calc(21px*var(--fs,1))}
+.rd-size{flex:1;height:8px;border-radius:9px;background:var(--line);overflow:hidden}.rd-size i{display:block;height:100%;background:linear-gradient(90deg,var(--accent,var(--gold)),var(--accent2,var(--gold)))}
+.ww-row{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:10px 4px;background:none;border:0;border-bottom:1px solid var(--line);color:var(--text);font:inherit;cursor:pointer}
+.ww-row>span:nth-child(2){flex:1;display:flex;flex-direction:column}.ww-row b{font-size:15px}.ww-row small{font-size:12.5px;color:var(--muted)}
+.ww-ic{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:var(--card2);font-size:18px;flex:none}
+.rem-time{font-size:28px;font-weight:700;padding:10px 14px;border-radius:14px;border:1.5px solid var(--line);background:var(--card2);color:var(--text);width:100%;box-sizing:border-box}
+#sheet.on .ww-row,#sheet.on .opt-row{animation:stagIn .4s cubic-bezier(.2,.8,.2,1) both}
 </style>
 </head>
 <body>
@@ -1357,6 +1381,8 @@ body.modern:not(.haspic) #v-today .greet .hello{background:linear-gradient(90deg
       <div class="row" style="justify-content:space-between">
         <div class="label" style="margin:0"><span class="dot"></span><span id="trLabel">Berean Standard Bible</span></div>
         <div class="row">
+          <button class="btn sm" id="snBtn" data-act="notes">📘 Notes</button>
+          <button class="btn sm" data-act="reader" aria-label="Reading settings">Aa</button>
           <button class="btn sm tts-only" id="chSpeak" hidden>🔊 Listen</button>
           <a class="btn sm ghost" id="vidLink" rel="noopener" data-ext="1">▶ Video</a>
           <a class="btn sm ghost" id="bgLink" rel="noopener" data-ext="1">Read in NIV ↗</a>
@@ -1390,6 +1416,9 @@ body.modern:not(.haspic) #v-today .greet .hello{background:linear-gradient(90deg
         <button data-act="sermons"><span class="tl-ic">⛪</span><b>Church notes</b><small>Sermon notes in one place</small></button>
         <button data-act="versePic"><span class="tl-ic">🖼</span><b>Verse picture</b><small>Make a shareable image</small></button>
         <button data-act="quiet"><span class="tl-ic">⏳</span><b>Quiet time</b><small>Timer for prayer &amp; reading</small></button>
+        <button data-act="whoWhere"><span class="tl-ic">👥</span><b>Who &amp; where</b><small>People &amp; places in this chapter</small></button>
+        <button data-act="group"><span class="tl-ic">👨‍👩‍👧</span><b>Group guide</b><small>Questions to lead a study</small></button>
+        <button data-act="reminder"><span class="tl-ic">⏰</span><b>Reminder</b><small>Daily alert in your calendar</small></button>
       </div>
     </div>
     <div class="panel" id="chStudy"></div>
@@ -1817,6 +1846,7 @@ function drawVerses(){
   const H=S.hl||{};
   $("#chText").innerHTML=curVerses.map(v=>{const r=`${refName()}:${v.n}`,h=H[r];return `${v.h?`<span class="vh">${esc(v.h)}</span>`:""}<span class="v ${savedSet.has(r)?"saved":""} ${h&&h.c?"hl hl-"+h.c:""}" data-v="${v.n}"><sup>${v.n}</sup>${esc(v.t)}${h&&h.n?`<span class="vn-ic" title="You have a note">📝</span>`:""}</span> `}).join("")+
    `<div class="tiny" style="margin-top:14px;font-family:var(--sans)">${curFromApi?`${tr().name} · text from the Free Use Bible API.`:`Text provided by AI from the public-domain ${tr().name}. For study, compare with your own Bible.`}</div>`;
+  applyStudyNotes();
 }
 function verseSheet(n){
   const v=curVerses.find(x=>x.n===n);if(!v)return;
@@ -1828,7 +1858,7 @@ function verseSheet(n){
    <div class="hl-row"><span class="hl-lbl">Highlight</span>${HLC.map(([k,name])=>`<button class="hl-dot hd-${k} ${h.c===k?"on":""}" data-hl="${k}" aria-label="${name}"></button>`).join("")}<button class="hl-dot hd-none" data-hl="" aria-label="Remove highlight">✕</button></div>
    <div class="vnote-box"><textarea id="vNote" rows="2" placeholder="📝 Add a note about this verse…">${esc(h.n||"")}</textarea><div class="tiny" id="vNoteStatus">${h.n?"Saved ✓":"Notes save automatically."}</div></div>
    <div class="row"><button class="btn gold sm" data-act="explainV">✦ Explain this verse</button><button class="btn sm" data-act="saveV">${isSaved?"★ Saved":"☆ Save"}</button><button class="btn sm" data-act="copyV">⧉ Copy</button></div>
-   <div class="row" style="margin-top:8px"><button class="btn sm" data-act="compareV">⇄ Compare translations</button><button class="btn sm" data-act="picV">🖼 Picture</button><button class="btn sm" data-act="memV">${(S.memory||[]).some(m=>m.ref===ref)?"🧠 Memorizing":"🧠 Memorize"}</button><a class="btn sm ghost" rel="noopener" data-ext="1" href="https://www.biblegateway.com/passage/?search=${encodeURIComponent(ref)}&version=NIV">NIV ↗</a></div><div id="vExplain" style="margin-top:12px"></div>`);
+   <div class="row" style="margin-top:8px"><button class="btn sm" data-act="compareV">⇄ Compare translations</button><button class="btn sm" data-act="picV">🖼 Picture</button><button class="btn sm" data-act="wordV">🔤 Word study</button><button class="btn sm" data-act="memV">${(S.memory||[]).some(m=>m.ref===ref)?"🧠 Memorizing":"🧠 Memorize"}</button><a class="btn sm ghost" rel="noopener" data-ext="1" href="https://www.biblegateway.com/passage/?search=${encodeURIComponent(ref)}&version=NIV">NIV ↗</a></div><div id="vExplain" style="margin-top:12px"></div>`);
 }
 async function explainVerse(ref,text,target){
   target.innerHTML=loadingHTML("Opening up this verse…");
@@ -2631,6 +2661,18 @@ document.addEventListener("click",e=>{
   if(t.dataset.savedTopic!==undefined){const st=S.savedTopics[Number(t.dataset.savedTopic)];show("study");const box=$("#topicResult");box.innerHTML=topicHTML(st.data,true);box.dataset.json=JSON.stringify(st.data);return}
   const act=t.dataset.act;
   if(act==="compareV")return compareVerse(selV,$("#vExplain"));
+  if(act==="wordV")return wordChips(selV,$("#vExplain"));
+  if(t.dataset.wstudy){document.querySelectorAll("[data-wstudy]").forEach(b=>b.classList.toggle("on",b===t));return wordStudy(t.dataset.wstudy)}
+  if(act==="notes")return notesSheet();
+  if(t.dataset.sn!==undefined){S.snMode=t.dataset.sn;save();closeSheet();buzz(10);applyStudyNotes();return}
+  if(act==="reader")return readerSheet();
+  if(t.dataset.rd){const[k,v]=t.dataset.rd.split(":");if(k==="size"){S.fontScale=Math.max(.8,Math.min(1.8,+((S.fontScale||1)+(v==="+"?.1:-.1)).toFixed(2)))}else if(k==="layout")S.rdLayout=v;else if(k==="space")S.rdSpace=v;else if(k==="font")S.rdFont=v;else if(k==="nums")S.rdNums=v==="on";applyReader();save();buzz(8);return readerSheet()}
+  if(act==="whoWhere")return whoWhereSheet();
+  if(t.dataset.wwPerson){const n=t.dataset.wwPerson;closeSheet();$("#personIn")&&($("#personIn").value=n);return explainPerson(n)}
+  if(t.dataset.wwPlace){const n=t.dataset.wwPlace;closeSheet();$("#placeIn")&&($("#placeIn").value=n);return explainPlace(n)}
+  if(act==="group")return groupSheet();
+  if(act==="grCopy"){navigator.clipboard.writeText(groupText).then(()=>toast("Guide copied — paste it in your group chat")).catch(()=>toast("Couldn't copy"));return}
+  if(act==="reminder")return reminderSheet();
   if(act==="picV"){const v=curVerses.find(x=>x.n===selV);return versePicSheet(`${refName()}:${selV}`,v.t)}
   if(act==="versePic")return versePicSheet();
   if(t.dataset.vp){vpStyle=t.dataset.vp;document.querySelectorAll("[data-vp]").forEach(b=>b.classList.toggle("on",b===t));return drawVersePic()}
@@ -2704,7 +2746,7 @@ $("#askForm").addEventListener("submit",e=>{e.preventDefault();const q=$("#askIn
 $("#hForm").addEventListener("submit",e=>{e.preventDefault();const q=$("#hIn").value;$("#hIn").value="";$("#hIn").style.height="";helperSend(q)});
 $("#hIn").addEventListener("input",e=>{e.target.style.height="auto";e.target.style.height=Math.min(130,e.target.scrollHeight)+"px"});
 $("#hIn").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey&&matchMedia("(pointer:fine)").matches){e.preventDefault();$("#hForm").requestSubmit()}});
-document.addEventListener("change",e=>{if(e.target.id==="picFile"){setPhoto(e.target.files&&e.target.files[0]);e.target.value="";return}if(e.target.id==="vidBook"){const b=BOOKS[Number(e.target.value)][0],a=$("#vidBookGo");a.href=yt(`BibleProject ${b} overview`);a.textContent=`▶ Watch ${b} overview`}});
+document.addEventListener("change",e=>{if(e.target.id==="remT"){const t=e.target.value||"07:00";S.remindAt=t;save();$("#remIcs").href=remIcs(t);$("#remG").href=remGoogle(t);return}if(e.target.id==="picFile"){setPhoto(e.target.files&&e.target.files[0]);e.target.value="";return}if(e.target.id==="vidBook"){const b=BOOKS[Number(e.target.value)][0],a=$("#vidBookGo");a.href=yt(`BibleProject ${b} overview`);a.textContent=`▶ Watch ${b} overview`}});
 document.addEventListener("submit",e=>{if(e.target.id==="prForm"){e.preventDefault();return addPrayer($("#prIn").value)}if(e.target.id==="vfForm"){e.preventDefault();$("#vfIn").blur();return findVerses($("#vfIn").value)}if(e.target.id==="dictForm"){e.preventDefault();$("#dictIn").blur();return lookupWord($("#dictIn").value)}if(e.target.id==="addSongForm"){e.preventDefault();const i=$("#addSongIn");addSong(i.value);i.value="";return}if(e.target.id==="smartForm"){e.preventDefault();const i=$("#smartIn");smartRoute(i.value);i.blur();return}if(e.target.id==="vidForm"){e.preventDefault();return findVideos($("#vidIn").value)}if(e.target.id==="customPlanForm"){e.preventDefault();const t=$("#cpTopic").value.trim();if(!t)return $("#cpTopic").focus();buildPlan(t,Number($("#cpDays").value),"","",true)}});
 $("#placeForm").addEventListener("submit",e=>{e.preventDefault();explainPlace($("#placeIn").value)});
 $("#personForm").addEventListener("submit",e=>{e.preventDefault();explainPerson($("#personIn").value)});
@@ -2987,6 +3029,95 @@ function qtTick(){const el=$("#qtTime"),arc=$("#qtArc"),left=QT.end-Date.now();
   if(QT.end&&left<=0){clearInterval(QT.iv);S.quietMin=(S.quietMin||0)+QT.len/60000;QT.end=0;markActive();save();qtChime();toast("Quiet time complete 🙏");if(el){quietSheet();confetti()}return}
   if(!el)return;if(QT.end>Date.now()){const s=Math.ceil(left/1000);el.textContent=`${Math.floor(s/60)}:${String(s%60).padStart(2,"0")}`;if(arc)arc.style.strokeDashoffset=String(327*(1-left/QT.len))}else if(arc)arc.style.strokeDashoffset="0"}
 function qtChime(){try{const a=new (window.AudioContext||window.webkitAudioContext)();[523.25,659.25,783.99].forEach((f,i)=>{const o=a.createOscillator(),g=a.createGain();o.type="sine";o.frequency.value=f;g.gain.setValueAtTime(0,a.currentTime+i*.35);g.gain.linearRampToValueAtTime(.18,a.currentTime+i*.35+.05);g.gain.exponentialRampToValueAtTime(.001,a.currentTime+i*.35+2.2);o.connect(g).connect(a.destination);o.start(a.currentTime+i*.35);o.stop(a.currentTime+i*.35+2.3)})}catch(e){}buzz([60,80,60])}
+
+/* ---------- Easier studying: study notes, reader settings, word study, people & places, group guide, reminder ---------- */
+const SN_LABEL={"":"📘 Notes","study":"📘 Notes on","simple":"🧒 Simple on"};
+function renderSnBtn(){const b=$("#snBtn");if(b){b.textContent=SN_LABEL[S.snMode||""];b.classList.toggle("on",!!S.snMode)}}
+function notesSheet(){
+  const m=S.snMode||"";
+  openSheet(`<div style="font-size:36px">📘</div><div class="plan-title" style="font-size:25px;margin:4px 0">Study notes</div>
+   <p class="muted" style="font-size:14px;line-height:1.5">Show helpful notes right inside the chapter as you read, like a study Bible.</p>
+   ${[["","Off","Just the Bible text"],["study","📘 Study notes","Short notes on key verses: meaning, background, cross-references"],["simple","🧒 Plain English","Each section explained in simple, everyday words"]].map(([k,t,d])=>`<button class="opt-row ${m===k?"on":""}" data-sn="${k}"><b>${t}</b><small>${d}</small></button>`).join("")}`);
+}
+let snReq=0;
+async function applyStudyNotes(){
+  renderSnBtn();const m=S.snMode||"";document.querySelectorAll("#chText .snote").forEach(e=>e.remove());
+  if(!m||!curVerses.length)return;
+  const bi=cur.bi,c=cur.c,ck=`db-sn-${m}-${bi}-${c}`,my=++snReq;let r=lsGet(ck);
+  if(!r){const box=$("#chText");box.insertAdjacentHTML("afterbegin",`<div class="snote sn-load">${m==="simple"?"🧒":"📘"} Writing ${m==="simple"?"plain-English notes":"study notes"} for ${esc(refName())}…</div>`);
+    try{r=m==="simple"?await askJSON(`Explain ${refName()} section by section in very simple, everyday English (about a 6th-grade reading level), so a new believer can follow it. Cover the whole chapter in 3–7 sections. JSON: {"notes":[{"v":first verse number of the section,"title":"short section title","note":"2–3 simple sentences"}]}`,"quick")
+      :await askJSON(`Write study-Bible notes for ${refName()}. Pick the 6–12 most important verses. Each note 1–2 sentences: meaning, historical background, key word or a cross-reference. JSON: {"notes":[{"v":verse number,"note":"..."}]}`,"quick");
+      if(r&&r.notes)lsSet(ck,r)}catch(e){r=null}
+    if(my!==snReq||cur.bi!==bi||cur.c!==c)return;document.querySelectorAll("#chText .sn-load").forEach(e=>e.remove());
+    if(!r||!r.notes){toast("Couldn't load notes — try again");return}}
+  (r.notes||[]).forEach(n=>{const v=document.querySelector(`#chText .v[data-v="${Number(n.v)}"]`);if(!v)return;
+    const html=`<span class="snote ${m}">${n.title?`<b>${esc(n.title)}</b> `:`<b>v${Number(n.v)}</b> `}${esc(n.note)}</span>`;
+    if(m==="simple")v.insertAdjacentHTML("beforebegin",html);else v.insertAdjacentHTML("afterend",html)});
+}
+/* reader settings */
+function applyReader(){const b=document.body;b.classList.toggle("rd-lines",S.rdLayout==="lines");b.classList.toggle("rd-nonum",S.rdNums===false);b.classList.toggle("rd-sans",S.rdFont==="sans");
+  b.dataset.rdsp=S.rdSpace||"normal";applyFont()}
+function readerSheet(){
+  const fs=Math.round((S.fontScale||1)*100),seg=(key,opts,cur)=>`<div class="seg" style="margin:0 0 4px">${opts.map(([v,l])=>`<button data-rd="${key}:${v}" class="${String(cur)===String(v)?"on":""}">${l}</button>`).join("")}</div>`;
+  openSheet(`<div style="font-size:34px">Aa</div><div class="plan-title" style="font-size:25px;margin:4px 0 8px">Reading settings</div>
+   <div class="sub">Text size</div><div class="row" style="align-items:center;flex-wrap:nowrap"><button class="btn" data-rd="size:-">A−</button><div class="rd-size"><i style="width:${Math.round(((S.fontScale||1)-.8)/1*100)}%"></i></div><button class="btn" data-rd="size:+">A+</button><b style="min-width:48px;text-align:right">${fs}%</b></div>
+   <div class="sub">Layout</div>${seg("layout",[["para","¶ Paragraph"],["lines","☰ Verse by verse"]],S.rdLayout||"para")}
+   <div class="sub">Line spacing</div>${seg("space",[["tight","Compact"],["normal","Normal"],["roomy","Roomy"]],S.rdSpace||"normal")}
+   <div class="sub">Font</div>${seg("font",[["serif","Classic"],["sans","Modern"]],S.rdFont||"serif")}
+   <div class="sub">Verse numbers</div>${seg("nums",[["on","Show"],["off","Hide"]],S.rdNums===false?"off":"on")}
+   <div class="rd-preview scripture"><span class="v"><sup>1</sup>In the beginning was the Word, and the Word was with God, and the Word was God.</span> <span class="v"><sup>2</sup>He was with God in the beginning.</span></div>`);
+}
+/* word study */
+const STOP=new Set("the and that with for this from have shall will unto them they their there then than were your you are not but his her him she was who whom what when which into upon also all any our out one has had may let because said says say been being does did been very more most even just like over such only these those its it's i'm".split(" "));
+function wordChips(n,target){const v=curVerses.find(x=>x.n===n);if(!v)return;const seen=new Set();
+  const words=v.t.replace(/[^A-Za-z’'\s-]/g," ").split(/\s+/).filter(w=>w.length>3&&!STOP.has(w.toLowerCase())&&!seen.has(w.toLowerCase())&&seen.add(w.toLowerCase()));
+  target.innerHTML=`<div class="sub">Word study · tap a word</div><div class="chips">${words.map(w=>`<button class="chip" data-wstudy="${esc(w)}">${esc(w)}</button>`).join("")}</div><div id="wsOut" style="margin-top:10px"></div>`}
+async function wordStudy(w){const o=$("#wsOut");if(!o)return;const v=curVerses.find(x=>x.n===selV),ref=`${refName()}:${selV}`;o.innerHTML=loadingHTML(`Studying “${esc(w)}”…`);
+  try{const r=await askJSON(`Word study: the word "${w}" in ${ref} ("${v?v.t:""}"). JSON: {"original":"the Hebrew or Greek word behind it","translit":"transliteration","strongs":"Strong's number like G26 or H2617, or empty","meaning":"core meaning in 1–2 sentences","here":"what it means in this verse, 1–2 sentences","elsewhere":[{"ref":"Book C:V","note":"short"}] (2–3 other places it appears)}`,"quick");
+    if(!$("#wsOut"))return;o.innerHTML=`<div class="kv"><div class="ws-head"><b style="font-size:20px;color:var(--text)">${esc(r.original||w)}</b> <span class="muted">${esc(r.translit||"")}${r.strongs?" · "+esc(r.strongs):""}</span></div><div class="nt" style="margin-top:6px">${esc(r.meaning)}</div><div class="sub" style="margin-top:10px">In this verse</div><div class="nt">${esc(r.here)}</div>
+     ${(r.elsewhere||[]).length?`<div class="sub" style="margin-top:10px">Also used in</div>${r.elsewhere.map(x=>`<div style="margin:4px 0">${refLink(x.ref)} <span class="muted" style="font-size:13px">${esc(x.note)}</span></div>`).join("")}`:""}</div>`;markActive();save()}
+  catch(e){o.innerHTML=errHTML(e)}}
+/* people & places in this chapter */
+async function whoWhereSheet(){
+  const bi=cur.bi,c=cur.c,ck=`db-ww-${bi}-${c}`;
+  openSheet(`<div style="font-size:36px">👥</div><div class="plan-title" style="font-size:25px;margin:4px 0">People &amp; places in ${esc(refName())}</div><div id="wwBox" style="margin-top:8px">${loadingHTML("Finding who and where…")}</div>`);
+  try{let r=lsGet(ck);if(!r){r=await askJSON(`List the people (or groups) and places mentioned in ${refName()}. JSON: {"people":[{"name":"...","who":"short description, 1 line"}],"places":[{"name":"...","what":"short description, 1 line"}]} (empty arrays if none)`,"quick");lsSet(ck,r)}
+    const b=$("#wwBox");if(!b)return;
+    b.innerHTML=`${(r.people||[]).length?`<div class="sub">People</div>${r.people.map(p=>`<button class="ww-row" data-ww-person="${esc(p.name)}"><span class="ww-ic">👤</span><span><b>${esc(p.name)}</b><small>${esc(p.who)}</small></span><span class="fy-go">›</span></button>`).join("")}`:""}
+     ${(r.places||[]).length?`<div class="sub">Places</div>${r.places.map(p=>`<button class="ww-row" data-ww-place="${esc(p.name)}"><span class="ww-ic">📍</span><span><b>${esc(p.name)}</b><small>${esc(p.what)}</small></span><span class="fy-go">›</span></button>`).join("")}`:""}
+     ${!(r.people||[]).length&&!(r.places||[]).length?`<div class="reflect">No specific people or places are named in this chapter.</div>`:`<div class="tiny" style="margin-top:8px">Tap one to see their full story or pictures of the place.</div>`}`;
+  }catch(e){const b=$("#wwBox");if(b)b.innerHTML=errHTML(e)}}
+/* small group guide */
+let groupText="";
+async function groupSheet(){
+  openSheet(`<div style="font-size:36px">👨‍👩‍👧‍👦</div><div class="plan-title" style="font-size:25px;margin:4px 0">Group study guide · ${esc(refName())}</div><div id="grBox" style="margin-top:8px">${loadingHTML("Preparing your group guide…")}</div>`);
+  try{const r=await askJSON(`Write a small-group Bible study guide on ${refName()} for a 45-minute meeting. JSON: {"opener":"a warm icebreaker question","big_idea":"one sentence","observe":[2 questions about what the text says],"understand":[2 questions about what it means],"apply":[2 questions about living it out],"leader_notes":"2–3 sentences of helpful background for the leader","prayer":"a short closing prayer focus"}`,"quick");
+    const b=$("#grBox");if(!b)return;const L=a=>(a||[]);
+    groupText=`${refName()} — Group study guide\n\nBig idea: ${r.big_idea}\n\nIcebreaker: ${r.opener}\n\nObserve:\n${L(r.observe).map(q=>"• "+q).join("\n")}\n\nUnderstand:\n${L(r.understand).map(q=>"• "+q).join("\n")}\n\nApply:\n${L(r.apply).map(q=>"• "+q).join("\n")}\n\nPrayer: ${r.prayer}`;
+    b.innerHTML=`<div class="reflect"><b>Big idea:</b> ${esc(r.big_idea)}</div>
+     <div class="sub">☕ Icebreaker</div><div class="kv">${esc(r.opener)}</div>
+     <div class="sub">👀 Observe — what does it say?</div>${L(r.observe).map(q=>`<div class="kv">${esc(q)}</div>`).join("")}
+     <div class="sub">💡 Understand — what does it mean?</div>${L(r.understand).map(q=>`<div class="kv">${esc(q)}</div>`).join("")}
+     <div class="sub">🙌 Apply — how do we live it?</div>${L(r.apply).map(q=>`<div class="kv">${esc(q)}</div>`).join("")}
+     <div class="sub">📝 Leader notes</div><div class="prose"><p>${esc(r.leader_notes)}</p></div>
+     <div class="sub">🙏 Close in prayer</div><div class="prose"><p>${esc(r.prayer)}</p></div>
+     <div class="row"><button class="btn gold" data-act="grCopy" style="flex:1">⧉ Copy guide to share</button><button class="btn" data-act="group">↻ New guide</button></div>`;markActive();save();
+  }catch(e){const b=$("#grBox");if(b)b.innerHTML=errHTML(e)}}
+/* daily reminder */
+function reminderSheet(){
+  const t=S.remindAt||"07:00";
+  openSheet(`<div style="font-size:36px">⏰</div><div class="plan-title" style="font-size:25px;margin:4px 0">Daily reading reminder</div>
+   <p class="muted" style="font-size:14px;line-height:1.5">Add a daily reminder to your phone's calendar so you never miss your time with God.</p>
+   <div class="sub">Remind me at</div><input type="time" id="remT" value="${t}" class="rem-time">
+   <a class="btn gold" id="remIcs" style="width:100%;margin-top:12px;text-align:center;display:block;box-sizing:border-box" download="daily-bread-reminder.ics" href="${remIcs(t)}">📅 Add to my calendar (iPhone &amp; most phones)</a>
+   <a class="btn" id="remG" rel="noopener" data-ext="1" style="width:100%;margin-top:8px;text-align:center;display:block;box-sizing:border-box" href="${remGoogle(t)}">Add to Google Calendar</a>
+   <div class="tiny" style="margin-top:10px">It repeats every day with an alert. You can change or delete it anytime in your calendar.</div>`);
+}
+function remStart(t){const[h,m]=t.split(":").map(Number),d=new Date();d.setDate(d.getDate()+1);d.setHours(h,m,0,0);const p=n=>String(n).padStart(2,"0");return {d,s:`${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}T${p(h)}${p(m)}00`,e:`${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}T${p(m+15>=60?h+1:h)}${p((m+15)%60)}00`}}
+function remIcs(t){const r=remStart(t),now=new Date().toISOString().replace(/[-:]/g,"").split(".")[0]+"Z";
+  const ics=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Daily Bread//EN","BEGIN:VEVENT",`UID:dailybread-${Date.now()}@dailybread`,`DTSTAMP:${now}`,`DTSTART:${r.s}`,`DTEND:${r.e}`,"RRULE:FREQ=DAILY","SUMMARY:📖 Daily Bread — time with God","DESCRIPTION:Open Daily Bread for today's reading and devotional.","BEGIN:VALARM","TRIGGER:PT0M","ACTION:DISPLAY","DESCRIPTION:Time for your Bible reading","END:VALARM","END:VEVENT","END:VCALENDAR"].join("\r\n");
+  return "data:text/calendar;charset=utf-8,"+encodeURIComponent(ics)}
+function remGoogle(t){const r=remStart(t);return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent("📖 Daily Bread — time with God")}&dates=${r.s}/${r.e}&recur=${encodeURIComponent("RRULE:FREQ=DAILY")}&details=${encodeURIComponent("Open Daily Bread for today's reading and devotional.")}`}
 
 /* ---------- Themes ---------- */
 const THEMES=[
@@ -3827,7 +3958,7 @@ function applyBg(){if(typeof isModern==="function"&&isModern())BGX.set("minimal"
 
 /* ---------- Boot ---------- */
 fillPicker();fillCh();renderCats();renderPeopleCats();renderPlaceCats();
-lookMigrate();applyTheme(S.theme||lsGet("db-theme")||"royal");applyFont();applyBg();applyNav();applyStyle();
+lookMigrate();applyTheme(S.theme||lsGet("db-theme")||"royal");applyFont();applyBg();applyReader();applyNav();applyStyle();
 votdPending=!!(window.claude&&!(S.votd&&S.votd.date===todayKey()));
 show(location.hash.slice(1)||"today",false);
 
@@ -3846,7 +3977,7 @@ show(location.hash.slice(1)||"today",false);
     if(snap.exists){S=Object.assign(unlock(DEFAULT),unlock(snap.data()));S.readCh=S.readCh||{};lsSet("db-state",S)}
     else{await flush()}
     $("#syncNote").textContent=window.DB_STANDALONE?"✓ Your progress, notes and saved items are saved on this device.":"✓ Your progress, notes and saved items sync privately across your devices.";
-    lookMigrate();applyTheme(S.theme||lsGet("db-theme")||"royal");applyFont();applyNav();applyStyle();if(BGX.mode!==(S.bg||"constellation"))applyBg();
+    lookMigrate();applyTheme(S.theme||lsGet("db-theme")||"royal");applyFont();applyReader();applyNav();applyStyle();if(BGX.mode!==(S.bg||"constellation"))applyBg();
     const tab=location.hash.slice(1)||"today";if(tab==="today")renderToday();if(tab==="journal")renderJournal();
   }catch(e){console.warn(e);$("#syncNote").textContent="Saved on this device only."}
   ensureVotd();initMic();
